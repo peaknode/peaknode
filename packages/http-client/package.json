@@ -1,5 +1,5 @@
 {
-  "name": "@bootleg/http-client",
+  "name": "@peaknode/http-client",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",

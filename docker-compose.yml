@@ -1,14 +1,14 @@
 services:
   db:
     image: mysql:8.0
-    container_name: dev-bootleg-store-db
+    container_name: dev-peaknode-db
     ports:
       - 33061:3306
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: dev-bootleg-store
-      MYSQL_USER: dev-bootleg-store
-      MYSQL_PASSWORD: dev-bootleg-store
+      MYSQL_DATABASE: dev-peaknode
+      MYSQL_USER: dev-peaknode
+      MYSQL_PASSWORD: dev-peaknode
     volumes:
       - ./db/data:/var/lib/mysql
 

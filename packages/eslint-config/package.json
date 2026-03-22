@@ -1,5 +1,5 @@
 {
-  "name": "@bootleg/eslint-config",
+  "name": "@peaknode/eslint-config",
   "version": "0.0.0",
   "type": "module",
   "private": true,
