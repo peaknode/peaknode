@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, OneToMany, OneToOne } from "typeorm";
 import { BaseEntity } from "../base/base.entity";
 import { User } from "../user/user.entity";
-import { CustomerAddress } from "./customer-address.entity";
+import { Address } from "../address/address.entity";
 
 @Entity("customer")
 export class Customer extends BaseEntity {
@@ -29,8 +29,8 @@ export class Customer extends BaseEntity {
   @JoinColumn({ name: "user_id" })
   user: User | null;
 
-  @OneToMany(() => CustomerAddress, (a) => a.customer, { cascade: true })
-  addresses: CustomerAddress[];
+  @OneToMany(() => Address, (a) => a.customer, { cascade: true })
+  addresses: Address[];
 
   // orders, coupons, cart 등은 각 모듈이 customer_id FK로 참조
 }
