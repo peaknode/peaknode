@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm --filter admin codegen:*)",
+      "Bash(pnpm --filter admin exec tsc:*)",
+      "Bash(pnpm --filter web codegen:*)",
+      "Bash(/Users/0jo/project/bootleg_commerce/apps/web/src/widgets/cart/list/model/use-cart-drawer.ts:*)",
+      "Bash(echo:*)",
+      "Bash(pnpm --filter @bootleg/web codegen:*)",
+      "Bash(pnpm codegen:*)",
+      "Bash(pnpm tsc:*)",
+      "Bash(pnpm check-types:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(find:*)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm exec tsc:*)",
+      "Bash(wc:*)",
+      "Read(//Users/0jo/project/bootleg_commerce/apps/**)",
+      "Read(//Users/0jo/project/bootleg_commerce/**)",
+      "Bash(pnpm --filter @peaknode/core check-types:*)"
+    ],
+    "additionalDirectories": [
+      "/Users/0jo/project/bootleg_commerce/apps/web/src/shared/ui/app-navigation",
+      "/Users/0jo/project/bootleg_commerce/packages/ui/src/components",
+      "/Users/0jo/project/bootleg_commerce/apps/web/src/entities/user/api",
+      "/Users/0jo/project/bootleg_commerce/apps/web/src/entities/user"
+    ]
+  }
+}

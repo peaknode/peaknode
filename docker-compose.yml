@@ -1,0 +1,21 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: dev-bootleg-store-db
+    ports:
+      - 33061:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: dev-bootleg-store
+      MYSQL_USER: dev-bootleg-store
+      MYSQL_PASSWORD: dev-bootleg-store
+    volumes:
+      - ./db/data:/var/lib/mysql
+
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: dev-workship-redis
+  #   ports:
+  #     - "63791:6379"
+  #   volumes:
+  #     - ./redis/data:/data

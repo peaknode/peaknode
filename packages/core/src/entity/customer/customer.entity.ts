@@ -1,0 +1,36 @@
+import { Column, Entity, JoinColumn, OneToMany, OneToOne } from "typeorm";
+import { BaseEntity } from "../base/base.entity";
+import { User } from "../user/user.entity";
+import { CustomerAddress } from "./customer-address.entity";
+
+@Entity("customer")
+export class Customer extends BaseEntity {
+  @Column({ name: "first_name" })
+  firstName: string;
+
+  @Column({ name: "last_name" })
+  lastName: string;
+
+  // User.identifier와 별도 컬럼 — 게스트(userId=null)도 이메일 보유
+  @Column({ name: "email_address", unique: true })
+  emailAddress: string;
+
+  @Column({ nullable: true })
+  phone: string | null;
+
+  @Column({ name: "is_active", default: true })
+  isActive: boolean;
+
+  // null = 게스트 체크아웃
+  @Column({ name: "user_id", nullable: true })
+  userId: string | null;
+
+  @OneToOne(() => User, (u) => u.customer, { nullable: true })
+  @JoinColumn({ name: "user_id" })
+  user: User | null;
+
+  @OneToMany(() => CustomerAddress, (a) => a.customer, { cascade: true })
+  addresses: CustomerAddress[];
+
+  // orders, coupons, cart 등은 각 모듈이 customer_id FK로 참조
+}
