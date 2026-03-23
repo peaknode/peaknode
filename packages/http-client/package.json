@@ -16,7 +16,7 @@
     "axios": "^1.13.5"
   },
   "devDependencies": {
-    "@bootleg/typescript-config": "workspace:*",
-    "@bootleg/eslint-config": "workspace:*"
+    "@peaknode/typescript-config": "workspace:*",
+    "@peaknode/eslint-config": "workspace:*"
   }
 }

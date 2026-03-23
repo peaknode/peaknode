@@ -1,0 +1,9 @@
+export { Product } from "./product.entity";
+export { ProductVariant } from "./product-variant.entity";
+export { ProductOptionGroup } from "./product-option-group.entity";
+export { ProductOption } from "./product-option.entity";
+export { ProductAsset } from "./product-asset.entity";
+export { ProductVariantAsset } from "./product-variant-asset.entity";
+export { Facet } from "./facet.entity";
+export { FacetValue } from "./facet-value.entity";
+export { Collection } from "./collection.entity";

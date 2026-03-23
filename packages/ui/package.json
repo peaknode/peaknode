@@ -11,8 +11,8 @@
     "check-types": "tsc --noEmit"
   },
   "devDependencies": {
-    "@bootleg/eslint-config": "workspace:*",
-    "@bootleg/typescript-config": "workspace:*",
+    "@peaknode/eslint-config": "workspace:*",
+    "@peaknode/typescript-config": "workspace:*",
     "@tanstack/react-table": "^8.21.3",
     "@types/node": "^22.15.3",
     "@types/react": "19.2.2",
