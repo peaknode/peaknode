@@ -1,3 +1,4 @@
+import { Field, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, OneToMany } from "typeorm";
 import { BaseEntity } from "../base/base.entity";
 import { FacetValue } from "./facet-value.entity";
@@ -17,9 +18,11 @@ import { FacetValue } from "./facet-value.entity";
  * // Facet: { name: "소재", code: "material" }
  * //   └─ FacetValues: ["면", "폴리에스터", "울"]
  */
+@ObjectType()
 @Entity("facet")
 export class Facet extends BaseEntity {
   /** 패싯 표시명. 예: "브랜드", "소재". */
+  @Field()
   @Column()
   name: string;
 
@@ -27,6 +30,7 @@ export class Facet extends BaseEntity {
    * 패싯의 기계 판독용 고유 식별자.
    * 영문 소문자와 하이픈 사용을 권장한다. 예: "brand", "material".
    */
+  @Field()
   @Column({ unique: true })
   code: string;
 
@@ -34,6 +38,7 @@ export class Facet extends BaseEntity {
    * 관리자 전용 패싯 여부.
    * true이면 쇼핑몰 프론트에 노출하지 않고 내부 관리 목적으로만 사용한다.
    */
+  @Field()
   @Column({ name: "is_private", default: false })
   isPrivate: boolean;
 
@@ -41,6 +46,7 @@ export class Facet extends BaseEntity {
    * 이 패싯에 속한 값 목록.
    * cascade가 활성화되어 있으므로 Facet 저장 시 FacetValue도 함께 저장된다.
    */
+  @Field(() => [FacetValue])
   @OneToMany(() => FacetValue, (v) => v.facet, { cascade: true })
   values: FacetValue[];
 }

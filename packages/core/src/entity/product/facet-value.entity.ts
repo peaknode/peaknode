@@ -1,3 +1,4 @@
+import { Field, ID, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, Index, JoinColumn, ManyToMany, ManyToOne } from "typeorm";
 import { BaseEntity } from "../base/base.entity";
 import { Facet } from "./facet.entity";
@@ -15,9 +16,11 @@ import { Product } from "./product.entity";
  * @example
  * // 상품 필터: 브랜드=나이키 → FacetValue({ code: "nike" })에 연결된 Product 조회
  */
+@ObjectType()
 @Entity("facet_value")
 export class FacetValue extends BaseEntity {
   /** 패싯 값 표시명. 예: "나이키", "면", "남성용". */
+  @Field()
   @Column()
   name: string;
 
@@ -26,14 +29,17 @@ export class FacetValue extends BaseEntity {
    * 같은 Facet 내에서 고유해야 한다. 영문 소문자와 하이픈 사용을 권장한다.
    * 예: "nike", "cotton", "mens".
    */
+  @Field()
   @Column()
   code: string;
 
   /** 소속 Facet의 ID. */
+  @Field(() => ID)
   @Column({ name: "facet_id" })
   facetId: string;
 
   /** 소속 Facet. */
+  @Field(() => Facet)
   @Index()
   @ManyToOne(() => Facet, (f) => f.values)
   @JoinColumn({ name: "facet_id" })
@@ -42,6 +48,7 @@ export class FacetValue extends BaseEntity {
   /**
    * 이 패싯 값이 적용된 상품 목록.
    * JoinTable 소유권은 {@link Product} 쪽에 있다.
+   * GraphQL에서는 역참조이므로 노출하지 않는다.
    */
   @ManyToMany(() => Product, (p) => p.facetValues)
   products: Product[];

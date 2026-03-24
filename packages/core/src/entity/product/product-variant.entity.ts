@@ -1,3 +1,4 @@
+import { Field, ID, Int, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, Index, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany } from "typeorm";
 import { BaseEntity } from "../base/base.entity";
 import { Asset } from "../asset/asset.entity";
@@ -15,12 +16,14 @@ import { Product } from "./product.entity";
  * // Product: "반팔 티셔츠"
  * // ProductVariant: { name: "흰색 / S", sku: "TEE-WHITE-S", price: 29000 }
  */
+@ObjectType()
 @Entity("product_variant")
 export class ProductVariant extends BaseEntity {
   /**
    * 변형 표시명. 선택된 옵션 값들을 조합해 생성한다.
    * 예: "흰색 / S", "검정 / M"
    */
+  @Field()
   @Column()
   name: string;
 
@@ -28,6 +31,7 @@ export class ProductVariant extends BaseEntity {
    * 재고 관리 단위(Stock Keeping Unit). 전체 Variant에서 고유해야 한다.
    * 예: "TEE-WHITE-S-001"
    */
+  @Field()
   @Column({ unique: true })
   sku: string;
 
@@ -35,6 +39,7 @@ export class ProductVariant extends BaseEntity {
    * 판매 가격. 원(KRW) 단위 정수로 저장한다.
    * 예: 29000 → ₩29,000
    */
+  @Field(() => Int)
   @Column({ type: "int" })
   price: number;
 
@@ -42,6 +47,7 @@ export class ProductVariant extends BaseEntity {
    * 변형 활성화 여부.
    * false이면 해당 옵션 조합은 구매 불가 상태로 표시된다.
    */
+  @Field()
   @Column({ default: true })
   enabled: boolean;
 
@@ -49,6 +55,7 @@ export class ProductVariant extends BaseEntity {
    * 실물 재고 수량.
    * 입고/출고 처리 시 이 값을 증감한다.
    */
+  @Field(() => Int)
   @Column({ name: "stock_on_hand", type: "int", default: 0 })
   stockOnHand: number;
 
@@ -57,6 +64,7 @@ export class ProductVariant extends BaseEntity {
    * 결제 완료 전 주문에 의해 점유된 수량으로, 실제 출고 시 stockOnHand에서 차감한다.
    * 가용 재고 = stockOnHand - stockAllocated
    */
+  @Field(() => Int)
   @Column({ name: "stock_allocated", type: "int", default: 0 })
   stockAllocated: number;
 
@@ -65,6 +73,7 @@ export class ProductVariant extends BaseEntity {
    * false이면 재고 수량과 무관하게 항상 구매 가능한 상태로 처리한다.
    * 디지털 상품이나 주문 제작 상품에 활용한다.
    */
+  @Field()
   @Column({ name: "track_inventory", default: true })
   trackInventory: boolean;
 
@@ -73,10 +82,12 @@ export class ProductVariant extends BaseEntity {
    * 가용 재고(stockOnHand - stockAllocated)가 이 값 이하가 되면 품절로 처리한다.
    * 기본값 0: 재고가 0이 되어야 품절.
    */
+  @Field(() => Int)
   @Column({ name: "out_of_stock_threshold", type: "int", default: 0 })
   outOfStockThreshold: number;
 
   /** 소속 Product의 ID. */
+  @Field(() => ID)
   @Column({ name: "product_id" })
   productId: string;
 
@@ -90,10 +101,12 @@ export class ProductVariant extends BaseEntity {
    * 이 변형의 대표 이미지 Asset ID.
    * null이면 Product의 featuredAsset을 대신 사용한다.
    */
+  @Field(() => ID, { nullable: true })
   @Column({ name: "featured_asset_id", nullable: true })
   featuredAssetId: string | null;
 
   /** 이 변형의 대표 이미지 Asset. */
+  @Field(() => Asset, { nullable: true })
   @ManyToOne(() => Asset, { nullable: true })
   @JoinColumn({ name: "featured_asset_id" })
   featuredAsset: Asset | null;
@@ -103,6 +116,7 @@ export class ProductVariant extends BaseEntity {
    * 예: [ProductOption("흰색"), ProductOption("S")]
    * 조인 테이블: `product_variant_options`
    */
+  @Field(() => [ProductOption])
   @ManyToMany(() => ProductOption, (o) => o.productVariants)
   @JoinTable({
     name: "product_variant_options",
@@ -115,6 +129,7 @@ export class ProductVariant extends BaseEntity {
    * 이 변형의 갤러리 이미지 목록.
    * {@link ProductVariantAsset.position} 오름차순으로 정렬해 사용한다.
    */
+  @Field(() => [ProductVariantAsset])
   @OneToMany(() => ProductVariantAsset, (pva) => pva.productVariant)
   variantAssets: ProductVariantAsset[];
 }

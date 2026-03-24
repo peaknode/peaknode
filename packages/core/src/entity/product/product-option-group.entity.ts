@@ -1,3 +1,4 @@
+import { Field, ID, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from "typeorm";
 import { BaseEntity } from "../base/base.entity";
 import { Product } from "./product.entity";
@@ -17,9 +18,11 @@ import { ProductOption } from "./product-option.entity";
  * // OptionGroup: { name: "사이즈", code: "size" }
  * //   └─ Options: [{ name: "S", code: "s" }, { name: "M", code: "m" }]
  */
+@ObjectType()
 @Entity("product_option_group")
 export class ProductOptionGroup extends BaseEntity {
   /** 옵션 그룹 표시명. 예: "색상", "사이즈". */
+  @Field()
   @Column()
   name: string;
 
@@ -27,10 +30,12 @@ export class ProductOptionGroup extends BaseEntity {
    * 옵션 그룹의 기계 판독용 식별자.
    * 영문 소문자와 하이픈 사용을 권장한다. 예: "color", "shoe-size".
    */
+  @Field()
   @Column()
   code: string;
 
   /** 소속 Product의 ID. */
+  @Field(() => ID)
   @Column({ name: "product_id" })
   productId: string;
 
@@ -43,6 +48,7 @@ export class ProductOptionGroup extends BaseEntity {
    * 이 그룹에 속한 옵션 값 목록.
    * cascade가 활성화되어 있으므로 그룹 저장 시 옵션도 함께 저장된다.
    */
+  @Field(() => [ProductOption])
   @OneToMany(() => ProductOption, (o) => o.group, { cascade: true })
   options: ProductOption[];
 }
