@@ -22,9 +22,9 @@ export { AdminApiModule } from "./api/admin-api.module";
 // ---------------------------------------------------------------------------
 // Services
 // ---------------------------------------------------------------------------
-export { ProductService } from "./service/product.service";
-export { ProductVariantService } from "./service/product-variant.service";
-export { ProductOptionGroupService } from "./service/product-option-group.service";
+export { ProductService } from "./service/product/product.service";
+export { ProductVariantService } from "./service/product/product-variant.service";
+export { ProductOptionGroupService } from "./service/product/product-option-group.service";
 
 // ---------------------------------------------------------------------------
 // Transaction Infrastructure

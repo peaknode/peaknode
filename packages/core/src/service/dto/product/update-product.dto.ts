@@ -8,6 +8,7 @@ import {
   Matches,
   MaxLength,
 } from "class-validator";
+import { GraphQLJSONScalar } from "src/common/types/json-scalar.class";
 
 /**
  * 상품 수정 요청 DTO.
@@ -73,4 +74,13 @@ export class UpdateProductDto {
   @IsArray()
   @IsUUID("all", { each: true })
   collectionIds?: string[];
+
+  /**
+   * 커스텀 필드 값 맵.
+   * 전달 시 기존 customFields를 전부 교체한다.
+   * 허용 필드와 타입은 `CustomFieldDefinition`(entityName="Product")으로 관리된다.
+   */
+  @Field(() => GraphQLJSONScalar, { nullable: true })
+  @IsOptional()
+  customFields?: Record<string, unknown>;
 }

@@ -1,6 +1,9 @@
 import { Module } from "@nestjs/common";
 import { ServiceModule } from "src/service/service.module";
+import { JsonScalar } from "./scalars/json.scalar";
+import { CustomFieldResolver } from "./resolvers/admin/custom-field.resolver";
 import { ProductResolver } from "./resolvers/admin/product.resolver";
+import { UserResolver } from "./resolvers/admin/user.resolver";
 
 /**
  * Admin API 모듈.
@@ -10,6 +13,6 @@ import { ProductResolver } from "./resolvers/admin/product.resolver";
  */
 @Module({
   imports: [ServiceModule],
-  providers: [ProductResolver],
+  providers: [JsonScalar, ProductResolver, CustomFieldResolver, UserResolver],
 })
 export class AdminApiModule {}

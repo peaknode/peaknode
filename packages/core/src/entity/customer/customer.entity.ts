@@ -33,4 +33,12 @@ export class Customer extends BaseEntity {
   addresses: Address[];
 
   // orders, coupons, cart 등은 각 모듈이 customer_id FK로 참조
+
+  /**
+   * 관리자가 정의한 커스텀 필드 값 맵.
+   * 허용 필드는 `CustomFieldDefinition`(entityName="Customer") 레코드로 관리한다.
+   * null이면 커스텀 필드 미설정 상태.
+   */
+  @Column({ name: "custom_fields", type: "simple-json", nullable: true })
+  customFields: Record<string, unknown> | null;
 }

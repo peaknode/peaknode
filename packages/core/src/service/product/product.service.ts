@@ -8,9 +8,9 @@ import {
   ProductVariant,
 } from "src/entity";
 import { IsNull } from "typeorm";
-import { CreateProductDto } from "./dto/product/create-product.dto";
-import { ListProductsDto } from "./dto/product/list-products.dto";
-import { UpdateProductDto } from "./dto/product/update-product.dto";
+import { CreateProductDto } from "../dto/product/create-product.dto";
+import { ListProductsDto } from "../dto/product/list-products.dto";
+import { UpdateProductDto } from "../dto/product/update-product.dto";
 import { ProductOptionGroupService } from "./product-option-group.service";
 import { ProductVariantService } from "./product-variant.service";
 
@@ -49,7 +49,7 @@ export class ProductService {
     protected readonly db: TransactionConnection,
     private readonly productVariantService: ProductVariantService,
     private readonly productOptionGroupService: ProductOptionGroupService,
-  ) {}
+  ) { }
 
   // ---------------------------------------------------------------------------
   // 조회
@@ -212,8 +212,8 @@ export class ProductService {
       product.facetValues =
         dto.facetValueIds.length > 0
           ? await this.db
-              .getRepository(FacetValue)
-              .findBy(dto.facetValueIds.map((fvId) => ({ id: fvId })))
+            .getRepository(FacetValue)
+            .findBy(dto.facetValueIds.map((fvId) => ({ id: fvId })))
           : [];
     }
 
@@ -221,8 +221,8 @@ export class ProductService {
       product.collections =
         dto.collectionIds.length > 0
           ? await this.db
-              .getRepository(Collection)
-              .findBy(dto.collectionIds.map((cId) => ({ id: cId })))
+            .getRepository(Collection)
+            .findBy(dto.collectionIds.map((cId) => ({ id: cId })))
           : [];
     }
 
@@ -330,8 +330,8 @@ export class ProductService {
     if (isInUse && !force) {
       throw new ConflictException(
         `ProductOptionGroup(id: "${optionGroupId}")의 옵션이 ` +
-          `${activeVariants.length}개의 Variant에서 사용 중입니다. ` +
-          `강제 제거하려면 force=true를 전달하세요.`,
+        `${activeVariants.length}개의 Variant에서 사용 중입니다. ` +
+        `강제 제거하려면 force=true를 전달하세요.`,
       );
     }
 

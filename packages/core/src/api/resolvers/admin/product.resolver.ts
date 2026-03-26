@@ -3,7 +3,7 @@ import { Product } from "src/entity";
 import { CreateProductDto } from "src/service/dto/product/create-product.dto";
 import { ListProductsDto } from "src/service/dto/product/list-products.dto";
 import { UpdateProductDto } from "src/service/dto/product/update-product.dto";
-import { ProductService } from "src/service/product.service";
+import { ProductService } from "src/service/product/product.service";
 import { ProductListResult } from "../../types/product-list-result.type";
 
 /**
@@ -16,7 +16,7 @@ import { ProductListResult } from "../../types/product-list-result.type";
  */
 @Resolver(() => Product)
 export class ProductResolver {
-  constructor(private readonly productService: ProductService) {}
+  constructor(private readonly productService: ProductService) { }
 
   // ─── Queries ─────────────────────────────────────────────────────────────
 

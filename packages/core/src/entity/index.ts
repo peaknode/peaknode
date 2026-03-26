@@ -8,3 +8,4 @@ export * from "./cart";
 export * from "./shipping";
 export * from "./promotion";
 export * from "./wishlist";
+export * from "./custom-field";

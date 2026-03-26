@@ -63,6 +63,33 @@ All entities extend `BaseEntity` which provides `id` (UUID), `createdAt`, `updat
 
 **Asset storage:** `source` field holds the MinIO object key (not a full URL). URL construction is handled at the service layer.
 
+### Custom Fields
+
+엔터티 도메인을 확장할 수 있는 커스텀 필드 시스템이 구현되어 있다.
+
+**지원 엔터티:** `Product`, `Customer`, `User`, `Administrator`
+- 각 엔터티는 `customFields: Record<string, unknown> | null` 컬럼(`type: "simple-json"`)을 갖는다.
+
+**커스텀 필드 정의:** `CustomFieldDefinition` 엔터티 (`src/entity/custom-field/`)
+- `entityName` + `name` 조합이 UNIQUE (`@Unique(["entityName", "name"])`)
+- `name`은 소문자로 시작하는 `[a-z][a-z0-9_]*` 형식 (snake_case 권장)
+- `type`은 생성 후 변경 불가 (`string`, `int`, `float`, `boolean`, `datetime`, `text`)
+- `list: true`이면 해당 타입의 배열로 저장
+
+**서비스:** `CustomFieldsService` (`src/service/custom-field/`)
+- `validate(entityName, customFields)` — whitelist 검증 + required 누락 체크 + 타입 검증
+- 커스텀 필드가 있는 엔터티를 생성/수정하는 서비스는 저장 전 `customFieldsService.validate()`를 호출해야 한다.
+
+**DTO 패턴:**
+- `CreateCustomFieldDefinitionDto` — `entityName`, `name`, `type` 필수; `label`, `required`, `list`, `defaultValue` 선택
+- `UpdateCustomFieldDefinitionDto` — `label`, `required`, `list`, `defaultValue`만 허용 (immutable 필드 제외)
+- 커스텀 필드를 받는 엔터티 Input DTO에는 `@Field(() => GraphQLJSONScalar, { nullable: true }) customFields?: Record<string, unknown>` 패턴 사용
+
+**새 엔터티에 커스텀 필드 추가 시:**
+1. 엔터티에 `@Column({ name: "custom_fields", type: "simple-json", nullable: true }) customFields: Record<string, unknown> | null;` 추가
+2. `CustomFieldEntityName` enum에 해당 엔터티 이름 추가 (`src/entity/custom-field/custom-field-definition.entity.ts`)
+3. 생성/수정 서비스 메서드에서 `customFieldsService.validate()` 호출 추가
+
 ## Code Style
 
 **JSDoc is required on all created or modified files.** Add JSDoc comments to:

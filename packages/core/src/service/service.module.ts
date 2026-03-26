@@ -1,8 +1,12 @@
 import { Module } from "@nestjs/common";
+import { JwtModule } from "@nestjs/jwt";
 import { DatabaseModule } from "src/common/database";
-import { ProductOptionGroupService } from "./product-option-group.service";
-import { ProductVariantService } from "./product-variant.service";
-import { ProductService } from "./product.service";
+import { AuthService } from "./auth/auth.service";
+import { CustomFieldsService } from "./custom-field/custom-field.service";
+import { ProductOptionGroupService } from "./product/product-option-group.service";
+import { ProductVariantService } from "./product/product-variant.service";
+import { ProductService } from "./product/product.service";
+import { UserService } from "./user/user.service";
 
 /**
  * 서비스 레이어를 묶는 NestJS 모듈.
@@ -23,8 +27,28 @@ import { ProductService } from "./product.service";
  * export class AppModule {}
  */
 @Module({
-  imports: [DatabaseModule],
-  providers: [ProductService, ProductVariantService, ProductOptionGroupService],
-  exports: [ProductService, ProductVariantService, ProductOptionGroupService],
+  imports: [
+    DatabaseModule,
+    JwtModule.register({
+      secret: process.env.JWT_SECRET ?? "dev-secret-change-in-production",
+      signOptions: { expiresIn: "15m" },
+    }),
+  ],
+  providers: [
+    ProductService,
+    ProductVariantService,
+    ProductOptionGroupService,
+    CustomFieldsService,
+    UserService,
+    AuthService,
+  ],
+  exports: [
+    ProductService,
+    ProductVariantService,
+    ProductOptionGroupService,
+    CustomFieldsService,
+    UserService,
+    AuthService,
+  ],
 })
-export class ServiceModule {}
+export class ServiceModule { }

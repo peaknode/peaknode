@@ -1,5 +1,6 @@
 import { Field, ID, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany } from "typeorm";
+import { GraphQLJSONScalar } from "src/common/types/json-scalar.class";
 import { BaseEntity } from "../base/base.entity";
 import { Asset } from "../asset/asset.entity";
 import { Collection } from "./collection.entity";
@@ -107,4 +108,13 @@ export class Product extends BaseEntity {
   @Field(() => [Collection])
   @ManyToMany(() => Collection, (c) => c.products)
   collections: Collection[];
+
+  /**
+   * 관리자가 정의한 커스텀 필드 값 맵.
+   * 허용 필드는 `CustomFieldDefinition`(entityName="Product") 레코드로 관리한다.
+   * null이면 커스텀 필드 미설정 상태.
+   */
+  @Field(() => GraphQLJSONScalar, { nullable: true })
+  @Column({ name: "custom_fields", type: "simple-json", nullable: true })
+  customFields: Record<string, unknown> | null;
 }
