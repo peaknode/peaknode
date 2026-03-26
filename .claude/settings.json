@@ -26,7 +26,11 @@
       "Bash(/Users/0jo/project/peaknode/packages/core/src/entity/wishlist/wishlist-item.entity.ts:*)",
       "Read(//Users/0jo/reference/vendure/packages/core/src/connection/**)",
       "Read(//Users/0jo/reference/vendure/packages/core/src/service/services/**)",
-      "Read(//Users/0jo/reference/vendure/packages/core/src/api/resolvers/admin/**)"
+      "Read(//Users/0jo/reference/vendure/packages/core/src/api/resolvers/admin/**)",
+      "Bash(pnpm --filter @peaknode/core test -- --testPathPattern=\"product.*service.spec\" --no-coverage)",
+      "Bash(pnpm --filter @peaknode/core install:*)",
+      "Bash(pnpm --filter @peaknode/core test:*)",
+      "Bash(pnpm --filter @peaknode/core build:*)"
     ],
     "additionalDirectories": [
       "/Users/0jo/project/bootleg_commerce/apps/web/src/shared/ui/app-navigation",
@@ -34,7 +38,8 @@
       "/Users/0jo/project/bootleg_commerce/apps/web/src/entities/user/api",
       "/Users/0jo/project/bootleg_commerce/apps/web/src/entities/user",
       "/Users/0jo/project/peaknode/packages/core/src/entity/cart",
-      "/Users/0jo/project/peaknode/packages/core/src/entity/shipping"
+      "/Users/0jo/project/peaknode/packages/core/src/entity/shipping",
+      "/Users/0jo/.claude/projects/-Users-0jo-project-peaknode/memory"
     ]
   }
 }
