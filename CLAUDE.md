@@ -90,6 +90,21 @@ All entities extend `BaseEntity` which provides `id` (UUID), `createdAt`, `updat
 2. `CustomFieldEntityName` enum에 해당 엔터티 이름 추가 (`src/entity/custom-field/custom-field-definition.entity.ts`)
 3. 생성/수정 서비스 메서드에서 `customFieldsService.validate()` 호출 추가
 
+## Documentation
+
+새로운 기능이나 시스템을 구현할 때는 문서 작성여부를 확인한 후에 `docs/` 폴더에 설계 문서를 작성한다.
+
+**작성 대상:** 새로운 도메인 시스템, 중요한 아키텍처 결정, 비자명한 설계 트레이드오프가 있는 경우
+**포함 내용:**
+- 왜 이 방식을 선택했는가 (설계 옵션 검토 + 선택 이유)
+- 핵심 설계 결정과 그 근거
+- 한계와 트레이드오프
+- 구현 파일 경로 참조
+
+**파일 명명:** `docs/{feature}-design.md` (예: `custom-fields-design.md`, `payment-flow-design.md`)
+
+> **배경:** 이 프로젝트는 오픈소스 및 SaaS 커머스 솔루션을 지향한다. 설계 의도와 트레이드오프를 문서화해두지 않으면, 나중에 코드만 봐서는 왜 이런 구조인지 알 수 없다. 기술 블로그 일지 형식으로 작성해서 설계 히스토리를 보존한다.
+
 ## Code Style
 
 **JSDoc is required on all created or modified files.** Add JSDoc comments to:

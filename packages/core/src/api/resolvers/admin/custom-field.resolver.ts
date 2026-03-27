@@ -1,4 +1,5 @@
 import { Args, ID, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { UseGuards } from "@nestjs/common";
 import {
   CustomFieldDefinition,
   CustomFieldEntityName,
@@ -6,13 +7,18 @@ import {
 import { CreateCustomFieldDefinitionDto } from "src/service/dto/custom-field/create-custom-field-definition.dto";
 import { UpdateCustomFieldDefinitionDto } from "src/service/dto/custom-field/update-custom-field-definition.dto";
 import { CustomFieldsService } from "src/service/custom-field/custom-field.service";
+import { AdminAuthGuard } from "src/common/guards/admin-auth.guard";
+import { RequirePermissions } from "src/common/decorators/require-permissions.decorator";
+import { Permission } from "src/common/permissions/permission.enum";
 
 /**
  * 커스텀 필드 정의 관리 Resolver (관리자 API).
  *
  * 엔터티별 커스텀 필드 정의의 CRUD를 제공한다.
+ * 모든 요청은 `AdminAuthGuard`로 보호되며 메서드별 `@RequirePermissions()`로 권한을 세분화한다.
  * 정의된 커스텀 필드는 해당 엔터티 생성/수정 시 `customFields` 입력 필드에서 사용된다.
  */
+@UseGuards(AdminAuthGuard)
 @Resolver(() => CustomFieldDefinition)
 export class CustomFieldResolver {
   constructor(private readonly customFieldsService: CustomFieldsService) {}
@@ -27,6 +33,7 @@ export class CustomFieldResolver {
    * @param entityName - 조회할 엔터티 이름
    * @returns 정의 배열
    */
+  @RequirePermissions(Permission.CustomFieldRead)
   @Query(() => [CustomFieldDefinition], { name: "customFieldDefinitions" })
   findAll(
     @Args("entityName", { type: () => CustomFieldEntityName })
@@ -41,6 +48,7 @@ export class CustomFieldResolver {
    * @param id - CustomFieldDefinition UUID
    * @returns 정의 엔터티
    */
+  @RequirePermissions(Permission.CustomFieldRead)
   @Query(() => CustomFieldDefinition, { name: "customFieldDefinition" })
   findOne(
     @Args("id", { type: () => ID }) id: string,
@@ -58,6 +66,7 @@ export class CustomFieldResolver {
    * @param input - 생성 데이터
    * @returns 생성된 정의 엔터티
    */
+  @RequirePermissions(Permission.CustomFieldCreate)
   @Mutation(() => CustomFieldDefinition, { name: "createCustomFieldDefinition" })
   create(
     @Args("input") input: CreateCustomFieldDefinitionDto,
@@ -72,6 +81,7 @@ export class CustomFieldResolver {
    * @param input - 수정 데이터
    * @returns 수정된 정의 엔터티
    */
+  @RequirePermissions(Permission.CustomFieldUpdate)
   @Mutation(() => CustomFieldDefinition, { name: "updateCustomFieldDefinition" })
   update(
     @Args("id", { type: () => ID }) id: string,
@@ -86,6 +96,7 @@ export class CustomFieldResolver {
    * @param id - 삭제할 정의 UUID
    * @returns 성공 여부
    */
+  @RequirePermissions(Permission.CustomFieldDelete)
   @Mutation(() => Boolean, { name: "deleteCustomFieldDefinition" })
   async delete(
     @Args("id", { type: () => ID }) id: string,

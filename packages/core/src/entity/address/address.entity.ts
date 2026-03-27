@@ -1,5 +1,6 @@
-import { BaseEntity, Column, Entity, Index, ManyToOne } from "typeorm";
+import { Column, Entity, Index, ManyToOne } from "typeorm";
 import { Customer } from "../customer";
+import { BaseEntity } from "../base/base.entity";
 
 @Entity('address')
 export class Address extends BaseEntity {

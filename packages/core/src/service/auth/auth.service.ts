@@ -1,7 +1,8 @@
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcrypt";
-import { TransactionConnection } from "src/common/database";
+import { Transactional, TransactionConnection } from "src/common/database";
+import { User } from "src/entity/user/user.entity";
 import { AuthResult } from "src/api/types/auth-result.type";
 import { OAuthLoginInput } from "../dto/user/oauth-login-input.dto";
 import { UserService } from "../user/user.service";
@@ -13,6 +14,7 @@ import { UserService } from "../user/user.service";
  * - OAuth 로그인 / 자동 회원가입
  * - JWT 액세스 토큰 + 리프레시 토큰 발급
  * - 리프레시 토큰으로 액세스 토큰 재발급
+ * - 로그아웃 (tokenVersion 증가로 기존 토큰 일괄 무효화)
  *
  * 사용자 계정 CRUD와 비밀번호 해시 관리는 `UserService`에 위임한다.
  */
@@ -61,7 +63,7 @@ export class AuthService {
 
     await this.userService.updateLastLogin(user.id);
 
-    return { ...this.issueTokens(user.id), user };
+    return { ...this.issueTokens(user.id, user.tokenVersion), user };
   }
 
   /**
@@ -107,7 +109,7 @@ export class AuthService {
 
     await this.userService.updateLastLogin(user.id);
 
-    return { ...this.issueTokens(user.id), user };
+    return { ...this.issueTokens(user.id, user.tokenVersion), user };
   }
 
   // ---------------------------------------------------------------------------
@@ -117,12 +119,14 @@ export class AuthService {
   /**
    * 리프레시 토큰을 검증하고 새 액세스 토큰을 발급한다.
    *
+   * tokenVersion을 DB와 비교하여 로그아웃 이후 발급된 리프레시 토큰을 거부한다.
+   *
    * @param refreshToken - 리프레시 JWT
    * @returns 새 액세스 토큰
-   * @throws UnauthorizedException - 토큰 유효하지 않음 / 타입 불일치
+   * @throws UnauthorizedException - 토큰 유효하지 않음 / 타입 불일치 / tokenVersion 불일치
    */
   async refreshAccessToken(refreshToken: string): Promise<Pick<AuthResult, "accessToken">> {
-    let payload: { sub: string; type: string };
+    let payload: { sub: string; type: string; tv: number };
     try {
       payload = this.jwtService.verify(refreshToken);
     } catch {
@@ -133,8 +137,59 @@ export class AuthService {
       throw new UnauthorizedException("리프레시 토큰이 아닙니다.");
     }
 
-    const { accessToken } = this.issueTokens(payload.sub);
+    const user = await this.userService.findById(payload.sub);
+    if (!user || user.tokenVersion !== payload.tv) {
+      throw new UnauthorizedException("만료된 리프레시 토큰입니다.");
+    }
+
+    const { accessToken } = this.issueTokens(payload.sub, user.tokenVersion);
     return { accessToken };
+  }
+
+  /**
+   * 로그아웃을 처리한다.
+   *
+   * User.tokenVersion을 1 증가시켜 해당 사용자에게 발급된 모든 기존 토큰을 일괄 무효화한다.
+   *
+   * @param userId - 로그아웃할 사용자 ID
+   */
+  @Transactional()
+  async logout(userId: string): Promise<void> {
+    await this.db.getRepository(User).increment({ id: userId }, "tokenVersion", 1);
+  }
+
+  /**
+   * 액세스 토큰을 검증하고 사용자 ID를 반환한다.
+   *
+   * JwtAuthGuard에서 호출한다. tokenVersion을 DB와 비교하여
+   * 로그아웃/탈퇴 이후 발급된 토큰을 거부한다.
+   *
+   * @param token - 액세스 JWT
+   * @returns 토큰에 담긴 userId
+   * @throws UnauthorizedException - 토큰 무효 / 타입 불일치 / tokenVersion 불일치 / 비활성 계정
+   */
+  async validateAccessToken(token: string): Promise<string> {
+    let payload: { sub: string; type: string; tv: number };
+    try {
+      payload = this.jwtService.verify(token);
+    } catch {
+      throw new UnauthorizedException("유효하지 않은 토큰입니다.");
+    }
+
+    if (payload.type !== "access") {
+      throw new UnauthorizedException("액세스 토큰이 아닙니다.");
+    }
+
+    const user = await this.userService.findById(payload.sub);
+    if (!user || user.tokenVersion !== payload.tv) {
+      throw new UnauthorizedException("만료된 토큰입니다.");
+    }
+
+    if (!user.isActive) {
+      throw new UnauthorizedException("비활성화된 계정입니다.");
+    }
+
+    return payload.sub;
   }
 
   // ---------------------------------------------------------------------------
@@ -153,21 +208,25 @@ export class AuthService {
   }
 
   /**
-   * 사용자 ID로 액세스 토큰과 리프레시 토큰을 발급한다.
+   * 사용자 ID와 tokenVersion으로 액세스 토큰, 리프레시 토큰을 발급한다.
    *
-   * - accessToken: `{ sub, type: 'access' }`, 만료 15분
-   * - refreshToken: `{ sub, type: 'refresh' }`, 만료 7일
+   * - accessToken: `{ sub, type: 'access', tv: tokenVersion }`, 만료 15분
+   * - refreshToken: `{ sub, type: 'refresh', tv: tokenVersion }`, 만료 7일
    *
    * @param userId - User UUID
+   * @param tokenVersion - 현재 tokenVersion
    * @returns 토큰 쌍
    */
-  private issueTokens(userId: string): { accessToken: string; refreshToken: string } {
+  private issueTokens(
+    userId: string,
+    tokenVersion: number,
+  ): { accessToken: string; refreshToken: string } {
     const accessToken = this.jwtService.sign(
-      { sub: userId, type: "access" },
+      { sub: userId, type: "access", tv: tokenVersion },
       { expiresIn: "15m" },
     );
     const refreshToken = this.jwtService.sign(
-      { sub: userId, type: "refresh" },
+      { sub: userId, type: "refresh", tv: tokenVersion },
       { expiresIn: "7d" },
     );
     return { accessToken, refreshToken };

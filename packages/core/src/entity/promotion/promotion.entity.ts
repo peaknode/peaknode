@@ -1,4 +1,4 @@
-import { Column, Entity, Index } from "typeorm";
+import { Column, Entity } from "typeorm";
 import { BaseEntity } from "../base/base.entity";
 
 /**
@@ -35,7 +35,6 @@ export class Promotion extends BaseEntity {
    * null이면 조건(`minimumOrderAmount` 등) 충족 시 자동 적용.
    * 값이 있으면 고객이 직접 코드를 입력해야 적용된다.
    */
-  @Index()
   @Column({ unique: true, nullable: true })
   code: string | null;
 

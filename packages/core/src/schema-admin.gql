@@ -1,0 +1,327 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Asset {
+  createdAt: DateTime
+  deletedAt: DateTime
+  fileSize: Int!
+  focalPoint: FocalPoint
+  height: Int
+  id: ID!
+  mimeType: String!
+  name: String!
+  preview: String
+  source: String!
+  type: AssetType!
+  updatedAt: DateTime
+  width: Int
+}
+
+enum AssetType {
+  AUDIO
+  BINARY
+  DOCUMENT
+  IMAGE
+  VIDEO
+}
+
+type AuthResult {
+  accessToken: String!
+  refreshToken: String!
+  user: User!
+}
+
+type Collection {
+  createdAt: DateTime
+  deletedAt: DateTime
+  description: String
+  featuredAsset: Asset
+  featuredAssetId: ID
+  id: ID!
+  isPrivate: Boolean!
+  isRoot: Boolean!
+  name: String!
+  parentId: ID
+  position: Int!
+  slug: String!
+  updatedAt: DateTime
+}
+
+input CreateAdminUserInput {
+  customFields: JSON
+  emailAddress: String!
+  firstName: String!
+  identifier: String!
+  lastName: String!
+  password: String!
+  roleIds: [String!]
+}
+
+input CreateCustomFieldDefinitionDto {
+  defaultValue: JSON
+  entityName: CustomFieldEntityName!
+  label: String
+  list: Boolean
+  name: String!
+  required: Boolean
+  type: CustomFieldType!
+}
+
+input CreateProductDto {
+  collectionIds: [ID!]
+  customFields: JSON
+  description: String
+  enabled: Boolean
+  facetValueIds: [ID!]
+  featuredAssetId: ID
+  name: String!
+  slug: String!
+}
+
+type CustomFieldDefinition {
+  createdAt: DateTime
+  defaultValue: JSON
+  deletedAt: DateTime
+  entityName: CustomFieldEntityName!
+  id: ID!
+  label: String
+  list: Boolean!
+  name: String!
+  required: Boolean!
+  type: CustomFieldType!
+  updatedAt: DateTime
+}
+
+"""커스텀 필드를 추가할 수 있는 엔터티 종류"""
+enum CustomFieldEntityName {
+  Administrator
+  Customer
+  Product
+  User
+}
+
+"""커스텀 필드의 데이터 타입"""
+enum CustomFieldType {
+  Boolean
+  Datetime
+  Float
+  Int
+  String
+  Text
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Facet {
+  code: String!
+  createdAt: DateTime
+  deletedAt: DateTime
+  id: ID!
+  isPrivate: Boolean!
+  name: String!
+  updatedAt: DateTime
+  values: [FacetValue!]!
+}
+
+type FacetValue {
+  code: String!
+  createdAt: DateTime
+  deletedAt: DateTime
+  facet: Facet!
+  facetId: ID!
+  id: ID!
+  name: String!
+  updatedAt: DateTime
+}
+
+type FocalPoint {
+  x: Float!
+  y: Float!
+}
+
+"""JSON 스칼라 타입 - 임의의 JSON 값을 직렬화/역직렬화한다"""
+scalar JSON
+
+input ListProductsDto {
+  collectionId: ID
+  enabled: Boolean
+  facetValueIds: [ID!]
+  search: String
+  skip: Int
+  take: Int
+}
+
+input LoginInput {
+  identifier: String!
+  password: String!
+}
+
+type Mutation {
+  """상품에 옵션그룹 추가"""
+  addOptionGroupToProduct(optionGroupId: ID!, productId: ID!): Product!
+
+  """관리자 사용자 생성"""
+  createAdminUser(input: CreateAdminUserInput!): User!
+  createCustomFieldDefinition(input: CreateCustomFieldDefinitionDto!): CustomFieldDefinition!
+
+  """상품 생성"""
+  createProduct(input: CreateProductDto!): Product!
+
+  """사용자 비활성화"""
+  deactivateUser(id: ID!): User!
+  deleteCustomFieldDefinition(id: ID!): Boolean!
+
+  """상품 소프트 딜리트"""
+  deleteProduct(id: ID!): Boolean!
+
+  """관리자 로그인 (JWT 발급)"""
+  loginAsAdmin(input: LoginInput!): AuthResult!
+
+  """리프레시 토큰으로 새 액세스 토큰 발급"""
+  refreshToken(token: String!): String!
+
+  """상품에서 옵션그룹 제거"""
+  removeOptionGroupFromProduct(force: Boolean = false, optionGroupId: ID!, productId: ID!): Product!
+  updateCustomFieldDefinition(id: ID!, input: UpdateCustomFieldDefinitionDto!): CustomFieldDefinition!
+
+  """상품 수정"""
+  updateProduct(id: ID!, input: UpdateProductDto!): Product!
+}
+
+type Product {
+  collections: [Collection!]!
+  createdAt: DateTime
+  customFields: JSON
+  deletedAt: DateTime
+  description: String
+  enabled: Boolean!
+  facetValues: [FacetValue!]!
+  featuredAsset: Asset
+  featuredAssetId: ID
+  id: ID!
+  name: String!
+  optionGroups: [ProductOptionGroup!]!
+  productAssets: [ProductAsset!]!
+  slug: String!
+  updatedAt: DateTime
+  variants: [ProductVariant!]!
+}
+
+type ProductAsset {
+  asset: Asset!
+  assetId: ID!
+  createdAt: DateTime
+  deletedAt: DateTime
+  id: ID!
+  position: Int!
+  productId: ID!
+  updatedAt: DateTime
+}
+
+type ProductListResult {
+  items: [Product!]!
+  total: Int!
+}
+
+type ProductOption {
+  code: String!
+  createdAt: DateTime
+  deletedAt: DateTime
+  groupId: ID!
+  id: ID!
+  name: String!
+  updatedAt: DateTime
+}
+
+type ProductOptionGroup {
+  code: String!
+  createdAt: DateTime
+  deletedAt: DateTime
+  id: ID!
+  name: String!
+  options: [ProductOption!]!
+  productId: ID!
+  updatedAt: DateTime
+}
+
+type ProductVariant {
+  createdAt: DateTime
+  deletedAt: DateTime
+  enabled: Boolean!
+  featuredAsset: Asset
+  featuredAssetId: ID
+  id: ID!
+  name: String!
+  options: [ProductOption!]!
+  outOfStockThreshold: Int!
+  price: Int!
+  productId: ID!
+  sku: String!
+  stockAllocated: Int!
+  stockOnHand: Int!
+  trackInventory: Boolean!
+  updatedAt: DateTime
+  variantAssets: [ProductVariantAsset!]!
+}
+
+type ProductVariantAsset {
+  asset: Asset!
+  assetId: ID!
+  createdAt: DateTime
+  deletedAt: DateTime
+  id: ID!
+  position: Int!
+  productVariantId: ID!
+  updatedAt: DateTime
+}
+
+type Query {
+  customFieldDefinition(id: ID!): CustomFieldDefinition!
+  customFieldDefinitions(entityName: CustomFieldEntityName!): [CustomFieldDefinition!]!
+
+  """ID로 상품 단건 조회"""
+  product(id: ID!): Product!
+
+  """slug로 상품 단건 조회"""
+  productBySlug(slug: String!): Product!
+
+  """상품 목록 조회 (페이지네이션)"""
+  products(options: ListProductsDto): ProductListResult!
+
+  """ID로 사용자 단건 조회"""
+  user(id: ID!): User
+}
+
+input UpdateCustomFieldDefinitionDto {
+  defaultValue: JSON
+  label: String
+  list: Boolean
+  required: Boolean
+}
+
+input UpdateProductDto {
+  collectionIds: [ID!]
+  customFields: JSON
+  description: String
+  enabled: Boolean
+  facetValueIds: [ID!]
+  featuredAssetId: ID
+  name: String
+  slug: String
+}
+
+type User {
+  createdAt: DateTime
+  customFields: JSON
+  deletedAt: DateTime
+  id: ID!
+  identifier: String!
+  isActive: Boolean!
+  lastLogin: DateTime
+  updatedAt: DateTime
+  verified: Boolean!
+}

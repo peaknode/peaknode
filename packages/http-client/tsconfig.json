@@ -1,5 +1,5 @@
 {
-  "extends": "@bootleg/typescript-config/base.json",
+  "extends": "@peaknode/typescript-config/base.json",
   "compilerOptions": {
     "outDir": "dist",
     "strictNullChecks": true,

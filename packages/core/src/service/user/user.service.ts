@@ -7,6 +7,7 @@ import { CustomFieldEntityName } from "src/entity/custom-field/custom-field-defi
 import { CustomFieldsService } from "../custom-field/custom-field.service";
 import { CreateAdminUserInput } from "../dto/user/create-admin-user-input.dto";
 import { CreateCustomerUserInput } from "../dto/user/create-customer-user-input.dto";
+import { UpdateProfileInput } from "../dto/user/update-profile.input";
 
 const BCRYPT_SALT_ROUNDS = 12;
 const VERIFICATION_TOKEN_TTL_MS = 24 * 60 * 60 * 1000; // 24시간
@@ -378,6 +379,71 @@ export class UserService {
 
     authMethod.externalIdentifier = await this.hashPassword(newPassword);
     await this.db.getRepository(AuthenticationMethod).save(authMethod);
+  }
+
+  // ---------------------------------------------------------------------------
+  // 프로필 관리
+  // ---------------------------------------------------------------------------
+
+  /**
+   * 고객 프로필을 수정한다.
+   *
+   * userId에 연결된 Customer 엔터티의 firstName, lastName, phone, customFields를 업데이트한다.
+   * 제공된 필드만 변경되며, 제공하지 않은 필드는 기존 값을 유지한다.
+   *
+   * @param userId - 프로필을 수정할 사용자 ID
+   * @param input - 수정할 프로필 데이터
+   * @returns 수정된 Customer 엔터티
+   * @throws NotFoundException - 해당 userId에 연결된 Customer 없음
+   */
+  @Transactional()
+  async updateProfile(userId: string, input: UpdateProfileInput): Promise<Customer> {
+    const customer = await this.db
+      .getRepository(Customer)
+      .findOne({ where: { userId } })
+      .then((r) => r ?? undefined);
+
+    if (!customer) {
+      throw new NotFoundException(`User(id: "${userId}")에 연결된 Customer를 찾을 수 없습니다.`);
+    }
+
+    if (input.customFields) {
+      await this.customFieldsService.validate(CustomFieldEntityName.Customer, input.customFields);
+    }
+
+    if (input.firstName !== undefined) customer.firstName = input.firstName;
+    if (input.lastName !== undefined) customer.lastName = input.lastName;
+    if (input.phone !== undefined) customer.phone = input.phone;
+    if (input.customFields !== undefined) customer.customFields = input.customFields;
+
+    return this.db.getRepository(Customer).save(customer);
+  }
+
+  /**
+   * 회원 탈퇴를 처리한다.
+   *
+   * User와 Customer 모두 isActive=false로 비활성화하고 tokenVersion을 증가시켜
+   * 기존에 발급된 모든 토큰을 일괄 무효화한다.
+   * 실제 데이터는 삭제하지 않아 주문 이력 등 관련 데이터가 보존된다.
+   *
+   * @param userId - 탈퇴할 사용자 ID
+   * @throws NotFoundException - 사용자 없음
+   */
+  @Transactional()
+  async withdrawAccount(userId: string): Promise<void> {
+    const user = await this.findById(userId);
+    if (!user) {
+      throw new NotFoundException(`User(id: "${userId}")를 찾을 수 없습니다.`);
+    }
+
+    await this.db.getRepository(User).update(userId, {
+      isActive: false,
+      tokenVersion: user.tokenVersion + 1,
+    });
+
+    await this.db
+      .getRepository(Customer)
+      .update({ userId }, { isActive: false });
   }
 
   // ---------------------------------------------------------------------------

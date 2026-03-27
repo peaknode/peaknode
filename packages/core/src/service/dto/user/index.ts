@@ -5,3 +5,4 @@ export { LoginInput } from "./login-input.dto";
 export { OAuthLoginInput } from "./oauth-login-input.dto";
 export { RequestPasswordResetInput } from "./request-password-reset-input.dto";
 export { ResetPasswordInput } from "./reset-password-input.dto";
+export { UpdateProfileInput } from "./update-profile.input";
