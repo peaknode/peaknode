@@ -1,0 +1,42 @@
+meta {
+  name: 역할 수정
+  type: graphql
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{adminAccessToken}}
+}
+
+body:graphql {
+  mutation UpdateRole($id: ID!, $input: UpdateRoleInput!) {
+    updateRole(id: $id, input: $input) {
+      id
+      code
+      description
+      permissions
+      updatedAt
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "id": "역할-uuid-입력",
+    "input": {
+      "description": "수정된 설명",
+      "permissions": ["product:read"]
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,42 @@
+meta {
+  name: 상품에서 옵션그룹 제거
+  type: graphql
+  seq: 8
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{adminAccessToken}}
+}
+
+body:graphql {
+  mutation RemoveOptionGroupFromProduct($productId: ID!, $optionGroupId: ID!, $force: Boolean) {
+    removeOptionGroupFromProduct(productId: $productId, optionGroupId: $optionGroupId, force: $force) {
+      id
+      name
+      optionGroups {
+        id
+        name
+        code
+      }
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "productId": "상품 UUID",
+    "optionGroupId": "옵션그룹 UUID",
+    "force": false
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

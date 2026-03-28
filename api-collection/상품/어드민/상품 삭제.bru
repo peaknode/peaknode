@@ -1,0 +1,32 @@
+meta {
+  name: 상품 삭제
+  type: graphql
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{adminAccessToken}}
+}
+
+body:graphql {
+  mutation DeleteProduct($id: ID!) {
+    deleteProduct(id: $id)
+  }
+}
+
+body:graphql:vars {
+  {
+    "id": "상품 UUID"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

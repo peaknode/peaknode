@@ -1,0 +1,42 @@
+meta {
+  name: 역할 생성
+  type: graphql
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{adminAccessToken}}
+}
+
+body:graphql {
+  mutation CreateRole($input: CreateRoleInput!) {
+    createRole(input: $input) {
+      id
+      code
+      description
+      permissions
+      createdAt
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "input": {
+      "code": "content-manager",
+      "description": "콘텐츠 관리자",
+      "permissions": ["product:read", "product:create"]
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

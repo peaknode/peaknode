@@ -1,0 +1,46 @@
+meta {
+  name: 상품 목록 조회
+  type: graphql
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{adminAccessToken}}
+}
+
+body:graphql {
+  query Products($options: ListProductsDto) {
+    products(options: $options) {
+      total
+      items {
+        id
+        name
+        slug
+        enabled
+        featuredAssetId
+        createdAt
+        updatedAt
+      }
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "options": {
+      "skip": 0,
+      "take": 20
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

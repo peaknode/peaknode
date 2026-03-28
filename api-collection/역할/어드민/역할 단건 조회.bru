@@ -1,0 +1,39 @@
+meta {
+  name: 역할 단건 조회
+  type: graphql
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{adminAccessToken}}
+}
+
+body:graphql {
+  query Role($id: ID!) {
+    role(id: $id) {
+      id
+      code
+      description
+      permissions
+      createdAt
+      updatedAt
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "id": "역할-uuid-입력"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -90,6 +90,79 @@ All entities extend `BaseEntity` which provides `id` (UUID), `createdAt`, `updat
 2. `CustomFieldEntityName` enum에 해당 엔터티 이름 추가 (`src/entity/custom-field/custom-field-definition.entity.ts`)
 3. 생성/수정 서비스 메서드에서 `customFieldsService.validate()` 호출 추가
 
+## Bruno API Collection
+
+Resolver를 새로 작성하거나 Query/Mutation을 추가할 때마다 반드시 대응하는 Bruno `.bru` 파일을 생성한다.
+
+**컬렉션 위치:** `api-collection/`
+**폴더 구조:** 도메인별 폴더 → `클라이언트/` (Shop API) 또는 `어드민/` (Admin API) 하위 폴더
+
+```
+api-collection/
+  {도메인}/
+    클라이언트/   ← ShopApi resolver 요청
+    어드민/       ← AdminApi resolver 요청
+```
+
+**파일 명명:** 한국어 동사/명사 조합 (예: `사용자 조회.bru`, `상품 생성.bru`)
+
+**GraphQL 엔드포인트:** 모든 요청은 `{{baseUrl}}/graphql` 단일 엔드포인트 사용
+
+**필수 포함 항목:**
+- `meta` — `name` (한국어), `type: graphql`, `seq` (폴더 내 순번)
+- `post` — `url: {{baseUrl}}/graphql`, `body: graphql`, `auth: inherit`
+- `headers` — 인증이 필요한 엔드포인트에 `Authorization: Bearer {{accessToken}}`
+- `body:graphql` — 타입 변수를 사용하는 완전한 operation (예: `mutation Foo($input: FooInput!) { foo(input: $input) { ... } }`)
+- `body:graphql:vars` — 실행 가능한 예시 값
+- `script:post-response` — 토큰을 반환하는 mutation은 `bru.setEnvVar()`로 환경변수에 저장; 로그아웃/탈퇴는 토큰 클리어
+- `settings` — `encodeUrl: true`, `timeout: 0`
+
+**반환 타입별 body:graphql 패턴:**
+- `Boolean` / `String` 등 스칼라 반환: 중괄호 없이 필드명만 (`refreshToken(token: $token)`)
+- Object 반환: 필요한 필드 선택자 포함
+
+**예시 (인증 필요 mutation):**
+```
+meta {
+  name: 상품 생성
+  type: graphql
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{accessToken}}
+}
+
+body:graphql {
+  mutation CreateProduct($input: CreateProductInput!) {
+    createProduct(input: $input) {
+      id
+      name
+      createdAt
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "input": {
+      "name": "테스트 상품"
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
+```
+
 ## Documentation
 
 새로운 기능이나 시스템을 구현할 때는 문서 작성여부를 확인한 후에 `docs/` 폴더에 설계 문서를 작성한다.

@@ -5,6 +5,7 @@ import { JsonScalar } from "./scalars/json.scalar";
 import { CustomFieldResolver } from "./resolvers/admin/custom-field.resolver";
 import { ProductResolver } from "./resolvers/admin/product.resolver";
 import { UserResolver } from "./resolvers/admin/user.resolver";
+import { RoleResolver } from "./resolvers/admin/role.resolver";
 
 /**
  * Admin API 모듈.
@@ -17,6 +18,6 @@ import { UserResolver } from "./resolvers/admin/user.resolver";
  */
 @Module({
   imports: [CommonModule, ServiceModule],
-  providers: [JsonScalar, ProductResolver, CustomFieldResolver, UserResolver],
+  providers: [JsonScalar, ProductResolver, CustomFieldResolver, UserResolver, RoleResolver],
 })
 export class AdminApiModule {}

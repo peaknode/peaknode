@@ -12,11 +12,14 @@
  * 재실행하려면 DB를 초기화한 뒤 다시 실행한다.
  */
 import "reflect-metadata";
+import * as bcrypt from "bcrypt";
 import { DataSource, EntityManager } from "typeorm";
 import { Administrator } from "src/entity/administrator/administrator.entity";
 import { Role } from "src/entity/administrator/role.entity";
 import { Address } from "src/entity/address/address.entity";
 import { Asset } from "src/entity/asset/asset.entity";
+import { Tag } from "src/entity/asset/asset-tag.entity";
+import { CustomFieldDefinition } from "src/entity/custom-field/custom-field-definition.entity";
 import { Cart } from "src/entity/cart/cart.entity";
 import { CartItem } from "src/entity/cart/cart-item.entity";
 import { Customer } from "src/entity/customer/customer.entity";
@@ -37,6 +40,7 @@ import { Promotion } from "src/entity/promotion/promotion.entity";
 import { ShippingMethod } from "src/entity/shipping/shipping-method.entity";
 import { AuthenticationMethod } from "src/entity/user/authentication-method.entity";
 import { User } from "src/entity/user/user.entity";
+import { SUPERADMIN_PERMISSION, Permission } from "src/common/permissions/permission.enum";
 import { Wishlist } from "src/entity/wishlist/wishlist.entity";
 import { WishlistItem } from "src/entity/wishlist/wishlist-item.entity";
 
@@ -54,6 +58,8 @@ const AppDataSource = new DataSource({
     Role,
     Address,
     Asset,
+    Tag,
+    CustomFieldDefinition,
     Cart,
     CartItem,
     Customer,
@@ -142,6 +148,86 @@ async function seed() {
       console.log(`시드 데이터가 이미 존재합니다 (Product ${existingCount}개). 건너뜁니다.`);
       return;
     }
+
+    // -------------------------------------------------------------------------
+    // 0. 기본 역할(Role) + 슈퍼관리자(Administrator) 계정
+    // -------------------------------------------------------------------------
+
+    const superadminRole = manager.create(Role, {
+      code: "superadmin",
+      description: "모든 권한을 가진 슈퍼 관리자 역할",
+      permissions: [SUPERADMIN_PERMISSION],
+    });
+
+    const productManagerRole = manager.create(Role, {
+      code: "product-manager",
+      description: "상품, 에셋, 패싯, 컬렉션, 커스텀 필드 관리",
+      permissions: [
+        Permission.ProductCreate, Permission.ProductRead,
+        Permission.ProductUpdate, Permission.ProductDelete,
+        Permission.AssetCreate, Permission.AssetRead, Permission.AssetDelete,
+        Permission.FacetCreate, Permission.FacetRead,
+        Permission.FacetUpdate, Permission.FacetDelete,
+        Permission.CollectionCreate, Permission.CollectionRead,
+        Permission.CollectionUpdate, Permission.CollectionDelete,
+        Permission.CustomFieldCreate, Permission.CustomFieldRead,
+        Permission.CustomFieldUpdate, Permission.CustomFieldDelete,
+      ],
+    });
+
+    const customerSupportRole = manager.create(Role, {
+      code: "customer-support",
+      description: "고객 조회/수정 및 주문 조회/수정",
+      permissions: [
+        Permission.CustomerRead, Permission.CustomerUpdate, Permission.CustomerDelete,
+        Permission.OrderRead, Permission.OrderUpdate,
+      ],
+    });
+
+    const adminManagerRole = manager.create(Role, {
+      code: "admin-manager",
+      description: "관리자 계정 및 역할 관리",
+      permissions: [
+        Permission.AdministratorCreate, Permission.AdministratorRead,
+        Permission.AdministratorUpdate, Permission.AdministratorDelete,
+        Permission.RoleCreate, Permission.RoleRead,
+        Permission.RoleUpdate, Permission.RoleDelete,
+      ],
+    });
+
+    await manager.save(Role, [superadminRole, productManagerRole, customerSupportRole, adminManagerRole]);
+    console.log("✓ 기본 역할 4개 생성 완료 (superadmin, product-manager, customer-support, admin-manager)");
+
+    // 슈퍼관리자 계정: User + Administrator + AuthenticationMethod
+    const hashedPassword = await bcrypt.hash("admin1234", 12);
+
+    const adminUser = manager.create(User, {
+      identifier: "admin@peaknode.dev",
+      isActive: true,
+      verified: true,
+      customFields: null,
+    });
+    await manager.save(User, adminUser);
+
+    const administrator = manager.create(Administrator, {
+      firstName: "피크",
+      lastName: "노드",
+      emailAddress: "admin@peaknode.dev",
+      isActive: true,
+      userId: adminUser.id,
+      roles: [superadminRole],
+    });
+    await manager.save(Administrator, administrator);
+
+    await manager.save(
+      AuthenticationMethod,
+      manager.create(AuthenticationMethod, {
+        strategy: "native",
+        externalIdentifier: hashedPassword,
+        userId: adminUser.id,
+      }),
+    );
+    console.log("✓ 슈퍼관리자 계정 생성 완료 (admin@peaknode.dev / admin1234)");
 
     // -------------------------------------------------------------------------
     // 1. Facet + FacetValue (cascade 저장)

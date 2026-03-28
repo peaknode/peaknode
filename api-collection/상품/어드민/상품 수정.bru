@@ -1,0 +1,45 @@
+meta {
+  name: 상품 수정
+  type: graphql
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{adminAccessToken}}
+}
+
+body:graphql {
+  mutation UpdateProduct($id: ID!, $input: UpdateProductDto!) {
+    updateProduct(id: $id, input: $input) {
+      id
+      name
+      slug
+      description
+      enabled
+      featuredAssetId
+      customFields
+      updatedAt
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "id": "상품 UUID",
+    "input": {
+      "name": "수정된 반팔 티셔츠",
+      "enabled": false
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

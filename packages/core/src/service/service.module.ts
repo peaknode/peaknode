@@ -7,6 +7,7 @@ import { ProductOptionGroupService } from "./product/product-option-group.servic
 import { ProductVariantService } from "./product/product-variant.service";
 import { ProductService } from "./product/product.service";
 import { UserService } from "./user/user.service";
+import { RoleService } from "./role/role.service";
 
 /**
  * 서비스 레이어를 묶는 NestJS 모듈.
@@ -41,6 +42,7 @@ import { UserService } from "./user/user.service";
     CustomFieldsService,
     UserService,
     AuthService,
+    RoleService,
   ],
   exports: [
     ProductService,
@@ -49,6 +51,7 @@ import { UserService } from "./user/user.service";
     CustomFieldsService,
     UserService,
     AuthService,
+    RoleService,
   ],
 })
 export class ServiceModule { }

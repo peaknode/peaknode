@@ -1,0 +1,36 @@
+meta {
+  name: 역할 목록 조회
+  type: graphql
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{adminAccessToken}}
+}
+
+body:graphql {
+  query Roles {
+    roles {
+      total
+      items {
+        id
+        code
+        description
+        permissions
+        createdAt
+        updatedAt
+      }
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

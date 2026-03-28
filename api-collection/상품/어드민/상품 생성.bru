@@ -1,0 +1,47 @@
+meta {
+  name: 상품 생성
+  type: graphql
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{adminAccessToken}}
+}
+
+body:graphql {
+  mutation CreateProduct($input: CreateProductDto!) {
+    createProduct(input: $input) {
+      id
+      name
+      slug
+      description
+      enabled
+      featuredAssetId
+      customFields
+      createdAt
+      updatedAt
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "input": {
+      "name": "반팔 티셔츠",
+      "slug": "basic-tee",
+      "description": "기본 반팔 티셔츠입니다.",
+      "enabled": true
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

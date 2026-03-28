@@ -29,20 +29,20 @@ body:graphql {
 body:graphql:vars {
   {
     "input": {
-      "identifier": "admin@example.com",
-      "password": "password123"
+      "identifier": "admin@peaknode.dev",
+      "password": "admin1234"
     }
   }
 }
 
 script:post-response {
   if(res.getStatus() !== 200) return;
-
+  
   const accessToken = res.body.data.loginAsAdmin.accessToken;
   const refreshToken = res.body.data.loginAsAdmin.refreshToken;
-
-  bru.setEnvVar('accessToken', accessToken)
-  bru.setEnvVar('refreshToken', refreshToken)
+  
+  bru.setEnvVar('adminAccessToken', accessToken)
+  bru.setEnvVar('adminRefreshToken', refreshToken)
 }
 
 settings {

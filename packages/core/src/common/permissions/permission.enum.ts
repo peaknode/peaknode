@@ -82,4 +82,24 @@ export enum Permission {
   AssetRead = "asset:read",
   /** 에셋 삭제 */
   AssetDelete = "asset:delete",
+
+  // ─── Facet ─────────────────────────────────────────────────────────────────
+  /** 패싯 생성 */
+  FacetCreate = "facet:create",
+  /** 패싯 목록/단건 조회 */
+  FacetRead = "facet:read",
+  /** 패싯 수정 */
+  FacetUpdate = "facet:update",
+  /** 패싯 삭제 */
+  FacetDelete = "facet:delete",
+
+  // ─── Collection ────────────────────────────────────────────────────────────
+  /** 컬렉션 생성 */
+  CollectionCreate = "collection:create",
+  /** 컬렉션 목록/단건 조회 */
+  CollectionRead = "collection:read",
+  /** 컬렉션 수정 */
+  CollectionUpdate = "collection:update",
+  /** 컬렉션 삭제 */
+  CollectionDelete = "collection:delete",
 }
