@@ -1,0 +1,50 @@
+meta {
+  name: 옵션그룹 생성
+  type: graphql
+  seq: 9
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{adminAccessToken}}
+}
+
+body:graphql {
+  mutation CreateProductOptionGroup($productId: ID!, $input: CreateProductOptionGroupDto!) {
+    createProductOptionGroup(productId: $productId, input: $input) {
+      id
+      name
+      code
+      productId
+      options {
+        id
+        name
+        code
+      }
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "productId": "상품 UUID",
+    "input": {
+      "name": "색상",
+      "code": "color",
+      "options": [
+        { "name": "흰색", "code": "white" },
+        { "name": "검정", "code": "black" }
+      ]
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

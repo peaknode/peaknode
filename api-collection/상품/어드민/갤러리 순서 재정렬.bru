@@ -1,0 +1,39 @@
+meta {
+  name: 갤러리 순서 재정렬
+  type: graphql
+  seq: 19
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{adminAccessToken}}
+}
+
+body:graphql {
+  mutation ReorderProductAssets($productId: ID!, $assetIds: [ID!]!) {
+    reorderProductAssets(productId: $productId, assetIds: $assetIds) {
+      id
+      productAssets {
+        position
+        assetId
+      }
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "productId": "상품 UUID",
+    "assetIds": ["Asset UUID 2", "Asset UUID 1", "Asset UUID 3"]
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

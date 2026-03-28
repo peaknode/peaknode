@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { CommonModule } from "src/common/common.module";
 import { ServiceModule } from "src/service/service.module";
 import { ShopAuthResolver } from "./resolvers/shop/shop-auth.resolver";
+import { ShopProductResolver } from "./resolvers/shop/shop-product.resolver";
 import { ShopUserResolver } from "./resolvers/shop/shop-user.resolver";
 
 /**
@@ -12,6 +13,6 @@ import { ShopUserResolver } from "./resolvers/shop/shop-user.resolver";
  */
 @Module({
   imports: [CommonModule, ServiceModule],
-  providers: [ShopAuthResolver, ShopUserResolver],
+  providers: [ShopAuthResolver, ShopProductResolver, ShopUserResolver],
 })
 export class ShopApiModule {}

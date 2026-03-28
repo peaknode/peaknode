@@ -1,17 +1,13 @@
 meta {
   name: 상품 단건 조회
   type: graphql
-  seq: 3
+  seq: 2
 }
 
 post {
   url: {{baseUrl}}/graphql
   body: graphql
   auth: inherit
-}
-
-headers {
-  Authorization: Bearer {{adminAccessToken}}
 }
 
 body:graphql {
@@ -22,36 +18,61 @@ body:graphql {
       slug
       description
       enabled
-      featuredAssetId
-      customFields
+      featuredAsset {
+        id
+        source
+      }
       variants {
         id
+        name
         sku
         price
+        enabled
         stockOnHand
+        options {
+          id
+          name
+          code
+          groupId
+        }
       }
       optionGroups {
         id
         name
         code
+        options {
+          id
+          name
+          code
+        }
       }
       facetValues {
         id
         name
+        facet {
+          id
+          name
+        }
       }
       collections {
         id
         name
+        slug
       }
-      createdAt
-      updatedAt
+      productAssets {
+        position
+        asset {
+          id
+          source
+        }
+      }
     }
   }
 }
 
 body:graphql:vars {
   {
-    "id": "6a9c9063-9d16-49e9-bb8f-39feb94fd7f3"
+    "id": "상품 UUID"
   }
 }
 

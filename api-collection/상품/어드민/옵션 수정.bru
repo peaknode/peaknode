@@ -1,0 +1,39 @@
+meta {
+  name: 옵션 수정
+  type: graphql
+  seq: 12
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{adminAccessToken}}
+}
+
+body:graphql {
+  mutation UpdateProductOption($id: ID!, $input: UpdateProductOptionDto!) {
+    updateProductOption(id: $id, input: $input) {
+      id
+      name
+      code
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "id": "옵션 UUID",
+    "input": {
+      "name": "레드"
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

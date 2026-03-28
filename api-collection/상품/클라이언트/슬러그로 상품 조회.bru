@@ -1,0 +1,68 @@
+meta {
+  name: 슬러그로 상품 조회
+  type: graphql
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+body:graphql {
+  query ProductBySlug($slug: String!) {
+    productBySlug(slug: $slug) {
+      id
+      name
+      slug
+      description
+      enabled
+      featuredAsset {
+        id
+        source
+      }
+      variants {
+        id
+        name
+        sku
+        price
+        enabled
+        stockOnHand
+        options {
+          id
+          name
+          code
+        }
+      }
+      optionGroups {
+        id
+        name
+        code
+        options {
+          id
+          name
+          code
+        }
+      }
+      productAssets {
+        position
+        asset {
+          id
+          source
+        }
+      }
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "slug": "basic-tee"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

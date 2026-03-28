@@ -1,0 +1,43 @@
+meta {
+  name: 갤러리 이미지 추가
+  type: graphql
+  seq: 17
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{adminAccessToken}}
+}
+
+body:graphql {
+  mutation AddProductAsset($productId: ID!, $assetId: ID!) {
+    addProductAsset(productId: $productId, assetId: $assetId) {
+      id
+      productAssets {
+        position
+        assetId
+        asset {
+          id
+          source
+        }
+      }
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "productId": "상품 UUID",
+    "assetId": "Asset UUID"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

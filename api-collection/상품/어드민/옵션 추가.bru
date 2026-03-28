@@ -1,0 +1,41 @@
+meta {
+  name: 옵션 추가
+  type: graphql
+  seq: 11
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{adminAccessToken}}
+}
+
+body:graphql {
+  mutation CreateProductOption($groupId: ID!, $input: CreateProductOptionDto!) {
+    createProductOption(groupId: $groupId, input: $input) {
+      id
+      name
+      code
+      groupId
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "groupId": "옵션그룹 UUID",
+    "input": {
+      "name": "빨강",
+      "code": "red"
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,32 @@
+meta {
+  name: Variant 삭제
+  type: graphql
+  seq: 16
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{adminAccessToken}}
+}
+
+body:graphql {
+  mutation DeleteProductVariant($id: ID!) {
+    deleteProductVariant(id: $id)
+  }
+}
+
+body:graphql:vars {
+  {
+    "id": "Variant UUID"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

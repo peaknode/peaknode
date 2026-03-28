@@ -4,6 +4,8 @@ import { ServiceModule } from "src/service/service.module";
 import { JsonScalar } from "./scalars/json.scalar";
 import { CustomFieldResolver } from "./resolvers/admin/custom-field.resolver";
 import { ProductResolver } from "./resolvers/admin/product.resolver";
+import { ProductOptionGroupResolver } from "./resolvers/admin/product-option-group.resolver";
+import { ProductVariantResolver } from "./resolvers/admin/product-variant.resolver";
 import { UserResolver } from "./resolvers/admin/user.resolver";
 import { RoleResolver } from "./resolvers/admin/role.resolver";
 
@@ -18,6 +20,14 @@ import { RoleResolver } from "./resolvers/admin/role.resolver";
  */
 @Module({
   imports: [CommonModule, ServiceModule],
-  providers: [JsonScalar, ProductResolver, CustomFieldResolver, UserResolver, RoleResolver],
+  providers: [
+    JsonScalar,
+    ProductResolver,
+    ProductOptionGroupResolver,
+    ProductVariantResolver,
+    CustomFieldResolver,
+    UserResolver,
+    RoleResolver,
+  ],
 })
 export class AdminApiModule {}

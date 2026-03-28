@@ -1,0 +1,44 @@
+meta {
+  name: Variant 수정
+  type: graphql
+  seq: 15
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{adminAccessToken}}
+}
+
+body:graphql {
+  mutation UpdateProductVariant($id: ID!, $input: UpdateProductVariantDto!) {
+    updateProductVariant(id: $id, input: $input) {
+      id
+      name
+      sku
+      price
+      enabled
+      stockOnHand
+      outOfStockThreshold
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "id": "Variant UUID",
+    "input": {
+      "price": 32000,
+      "stockOnHand": 50
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

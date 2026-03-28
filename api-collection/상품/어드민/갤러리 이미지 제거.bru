@@ -1,0 +1,39 @@
+meta {
+  name: 갤러리 이미지 제거
+  type: graphql
+  seq: 18
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{adminAccessToken}}
+}
+
+body:graphql {
+  mutation RemoveProductAsset($productId: ID!, $assetId: ID!) {
+    removeProductAsset(productId: $productId, assetId: $assetId) {
+      id
+      productAssets {
+        position
+        assetId
+      }
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "productId": "상품 UUID",
+    "assetId": "Asset UUID"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

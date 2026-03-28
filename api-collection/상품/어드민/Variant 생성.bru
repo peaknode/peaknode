@@ -1,0 +1,54 @@
+meta {
+  name: Variant 생성
+  type: graphql
+  seq: 14
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{adminAccessToken}}
+}
+
+body:graphql {
+  mutation CreateProductVariant($productId: ID!, $input: CreateProductVariantDto!) {
+    createProductVariant(productId: $productId, input: $input) {
+      id
+      name
+      sku
+      price
+      enabled
+      stockOnHand
+      trackInventory
+      outOfStockThreshold
+      options {
+        id
+        name
+        code
+      }
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "productId": "상품 UUID",
+    "input": {
+      "name": "흰색 / S",
+      "sku": "TEE-WHITE-S",
+      "price": 29000,
+      "enabled": true,
+      "stockOnHand": 100,
+      "optionIds": ["흰색 옵션 UUID", "S 옵션 UUID"]
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

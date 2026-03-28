@@ -5,6 +5,7 @@ import { CreateProductDto } from "src/service/dto/product/create-product.dto";
 import { ListProductsDto } from "src/service/dto/product/list-products.dto";
 import { UpdateProductDto } from "src/service/dto/product/update-product.dto";
 import { ProductService } from "src/service/product/product.service";
+import { ProductAssetService } from "src/service/product/product-asset.service";
 import { AdminAuthGuard } from "src/common/guards/admin-auth.guard";
 import { RequirePermissions } from "src/common/decorators/require-permissions.decorator";
 import { Permission } from "src/common/permissions/permission.enum";
@@ -22,7 +23,10 @@ import { ProductListResult } from "../../types/product-list-result.type";
 @UseGuards(AdminAuthGuard)
 @Resolver(() => Product)
 export class ProductResolver {
-  constructor(private readonly productService: ProductService) { }
+  constructor(
+    private readonly productService: ProductService,
+    private readonly productAssetService: ProductAssetService,
+  ) {}
 
   // ─── Queries ─────────────────────────────────────────────────────────────
 
@@ -155,5 +159,55 @@ export class ProductResolver {
     @Args("force", { nullable: true, defaultValue: false }) force?: boolean,
   ): Promise<Product> {
     return this.productService.removeOptionGroupFromProduct(productId, optionGroupId, force);
+  }
+
+  // ─── 갤러리 Mutations ─────────────────────────────────────────────────────
+
+  /**
+   * 상품 갤러리에 이미지를 추가한다.
+   *
+   * @example
+   * mutation { addProductAsset(productId: "p-uuid", assetId: "a-uuid") { id productAssets { position asset { id } } } }
+   */
+  @RequirePermissions(Permission.ProductUpdate)
+  @Mutation(() => Product, { description: "상품 갤러리에 이미지 추가" })
+  addProductAsset(
+    @Args("productId", { type: () => ID }) productId: string,
+    @Args("assetId", { type: () => ID }) assetId: string,
+  ): Promise<Product> {
+    return this.productAssetService.add(productId, assetId);
+  }
+
+  /**
+   * 상품 갤러리에서 이미지를 제거한다.
+   *
+   * @example
+   * mutation { removeProductAsset(productId: "p-uuid", assetId: "a-uuid") { id productAssets { position asset { id } } } }
+   */
+  @RequirePermissions(Permission.ProductUpdate)
+  @Mutation(() => Product, { description: "상품 갤러리에서 이미지 제거" })
+  removeProductAsset(
+    @Args("productId", { type: () => ID }) productId: string,
+    @Args("assetId", { type: () => ID }) assetId: string,
+  ): Promise<Product> {
+    return this.productAssetService.remove(productId, assetId);
+  }
+
+  /**
+   * 상품 갤러리 이미지 순서를 재정렬한다.
+   *
+   * `assetIds` 배열의 인덱스 순서가 새 position이 된다.
+   * 배열에 없는 기존 이미지는 제거된다.
+   *
+   * @example
+   * mutation { reorderProductAssets(productId: "p-uuid", assetIds: ["a2-uuid", "a1-uuid"]) { id productAssets { position } } }
+   */
+  @RequirePermissions(Permission.ProductUpdate)
+  @Mutation(() => Product, { description: "상품 갤러리 이미지 순서 재정렬" })
+  reorderProductAssets(
+    @Args("productId", { type: () => ID }) productId: string,
+    @Args("assetIds", { type: () => [ID] }) assetIds: string[],
+  ): Promise<Product> {
+    return this.productAssetService.reorder(productId, assetIds);
   }
 }

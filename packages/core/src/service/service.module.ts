@@ -3,6 +3,7 @@ import { JwtModule } from "@nestjs/jwt";
 import { DatabaseModule } from "src/common/database";
 import { AuthService } from "./auth/auth.service";
 import { CustomFieldsService } from "./custom-field/custom-field.service";
+import { ProductAssetService } from "./product/product-asset.service";
 import { ProductOptionGroupService } from "./product/product-option-group.service";
 import { ProductVariantService } from "./product/product-variant.service";
 import { ProductService } from "./product/product.service";
@@ -39,6 +40,7 @@ import { RoleService } from "./role/role.service";
     ProductService,
     ProductVariantService,
     ProductOptionGroupService,
+    ProductAssetService,
     CustomFieldsService,
     UserService,
     AuthService,
@@ -48,6 +50,7 @@ import { RoleService } from "./role/role.service";
     ProductService,
     ProductVariantService,
     ProductOptionGroupService,
+    ProductAssetService,
     CustomFieldsService,
     UserService,
     AuthService,

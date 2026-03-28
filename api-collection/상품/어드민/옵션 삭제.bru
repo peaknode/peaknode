@@ -1,0 +1,32 @@
+meta {
+  name: 옵션 삭제
+  type: graphql
+  seq: 13
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{adminAccessToken}}
+}
+
+body:graphql {
+  mutation DeleteProductOption($id: ID!) {
+    deleteProductOption(id: $id)
+  }
+}
+
+body:graphql:vars {
+  {
+    "id": "옵션 UUID"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

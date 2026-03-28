@@ -93,6 +93,29 @@ input CreateProductDto {
   slug: String!
 }
 
+input CreateProductOptionDto {
+  code: String!
+  name: String!
+}
+
+input CreateProductOptionGroupDto {
+  code: String!
+  name: String!
+  options: [ProductOptionItemDto!]
+}
+
+input CreateProductVariantDto {
+  enabled: Boolean
+  featuredAssetId: ID
+  name: String!
+  optionIds: [ID!]
+  outOfStockThreshold: Int
+  price: Int!
+  sku: String!
+  stockOnHand: Int
+  trackInventory: Boolean
+}
+
 input CreateRoleInput {
   code: String!
   description: String!
@@ -197,6 +220,9 @@ type Mutation {
   """상품에 옵션그룹 추가"""
   addOptionGroupToProduct(optionGroupId: ID!, productId: ID!): Product!
 
+  """상품 갤러리에 이미지 추가"""
+  addProductAsset(assetId: ID!, productId: ID!): Product!
+
   """비밀번호 변경"""
   changePassword(input: ChangePasswordInput!): Boolean!
 
@@ -207,6 +233,15 @@ type Mutation {
   """상품 생성"""
   createProduct(input: CreateProductDto!): Product!
 
+  """옵션그룹에 옵션 값 추가"""
+  createProductOption(groupId: ID!, input: CreateProductOptionDto!): ProductOption!
+
+  """옵션그룹 생성 및 Product 연결"""
+  createProductOptionGroup(input: CreateProductOptionGroupDto!, productId: ID!): ProductOptionGroup!
+
+  """ProductVariant(SKU) 생성"""
+  createProductVariant(input: CreateProductVariantDto!, productId: ID!): ProductVariant!
+
   """역할 생성"""
   createRole(input: CreateRoleInput!): Role!
 
@@ -216,6 +251,12 @@ type Mutation {
 
   """상품 소프트 딜리트"""
   deleteProduct(id: ID!): Boolean!
+
+  """옵션 값 삭제"""
+  deleteProductOption(id: ID!): Boolean!
+
+  """ProductVariant 소프트 딜리트"""
+  deleteProductVariant(id: ID!): Boolean!
 
   """역할 삭제"""
   deleteRole(id: ID!): Boolean!
@@ -238,6 +279,12 @@ type Mutation {
   """상품에서 옵션그룹 제거"""
   removeOptionGroupFromProduct(force: Boolean = false, optionGroupId: ID!, productId: ID!): Product!
 
+  """상품 갤러리에서 이미지 제거"""
+  removeProductAsset(assetId: ID!, productId: ID!): Product!
+
+  """상품 갤러리 이미지 순서 재정렬"""
+  reorderProductAssets(assetIds: [ID!]!, productId: ID!): Product!
+
   """비밀번호 재설정 토큰 생성 요청"""
   requestPasswordReset(input: RequestPasswordResetInput!): Boolean!
 
@@ -250,6 +297,15 @@ type Mutation {
 
   """상품 수정"""
   updateProduct(id: ID!, input: UpdateProductDto!): Product!
+
+  """옵션 값 수정"""
+  updateProductOption(id: ID!, input: UpdateProductOptionDto!): ProductOption!
+
+  """옵션그룹 수정"""
+  updateProductOptionGroup(id: ID!, input: UpdateProductOptionGroupDto!): ProductOptionGroup!
+
+  """ProductVariant 수정"""
+  updateProductVariant(id: ID!, input: UpdateProductVariantDto!): ProductVariant!
 
   """역할 수정"""
   updateRole(id: ID!, input: UpdateRoleInput!): Role!
@@ -317,6 +373,11 @@ type ProductOptionGroup {
   updatedAt: DateTime
 }
 
+input ProductOptionItemDto {
+  code: String!
+  name: String!
+}
+
 type ProductVariant {
   createdAt: DateTime
   deletedAt: DateTime
@@ -355,13 +416,13 @@ type Query {
   """현재 로그인한 사용자 정보 조회"""
   me: User!
 
-  """ID로 상품 단건 조회"""
+  """ID로 활성 상품 단건 조회 (Shop)"""
   product(id: ID!): Product!
 
-  """slug로 상품 단건 조회"""
+  """slug로 활성 상품 단건 조회 (Shop)"""
   productBySlug(slug: String!): Product!
 
-  """상품 목록 조회 (페이지네이션)"""
+  """활성 상품 목록 조회 (Shop)"""
   products(options: ListProductsDto): ProductListResult!
 
   """ID로 역할 단건 조회"""
@@ -414,6 +475,28 @@ input UpdateProductDto {
   featuredAssetId: ID
   name: String
   slug: String
+}
+
+input UpdateProductOptionDto {
+  code: String
+  name: String
+}
+
+input UpdateProductOptionGroupDto {
+  code: String
+  name: String
+}
+
+input UpdateProductVariantDto {
+  enabled: Boolean
+  featuredAssetId: ID
+  name: String
+  optionIds: [ID!]
+  outOfStockThreshold: Int
+  price: Int
+  sku: String
+  stockOnHand: Int
+  trackInventory: Boolean
 }
 
 input UpdateProfileInput {

@@ -1,0 +1,39 @@
+meta {
+  name: 옵션그룹 수정
+  type: graphql
+  seq: 10
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{adminAccessToken}}
+}
+
+body:graphql {
+  mutation UpdateProductOptionGroup($id: ID!, $input: UpdateProductOptionGroupDto!) {
+    updateProductOptionGroup(id: $id, input: $input) {
+      id
+      name
+      code
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "id": "옵션그룹 UUID",
+    "input": {
+      "name": "색상 (변경)"
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
