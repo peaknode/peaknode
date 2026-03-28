@@ -1,0 +1,51 @@
+meta {
+  name: 로그인
+  type: graphql
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+body:graphql {
+  mutation LoginAsAdmin($input: LoginInput!) {
+    loginAsAdmin(input: $input) {
+      accessToken
+      refreshToken
+      user {
+        id
+        identifier
+        verified
+        isActive
+        createdAt
+      }
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "input": {
+      "identifier": "admin@example.com",
+      "password": "password123"
+    }
+  }
+}
+
+script:post-response {
+  if(res.getStatus() !== 200) return;
+
+  const accessToken = res.body.data.loginAsAdmin.accessToken;
+  const refreshToken = res.body.data.loginAsAdmin.refreshToken;
+
+  bru.setEnvVar('accessToken', accessToken)
+  bru.setEnvVar('refreshToken', refreshToken)
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,34 @@
+meta {
+  name: 로그아웃
+  type: graphql
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{accessToken}}
+}
+
+body:graphql {
+  mutation Logout {
+    logout
+  }
+  
+}
+
+script:post-response {
+  if(res.getStatus() !== 200) return;
+
+  bru.setEnvVar('accessToken', '')
+  bru.setEnvVar('refreshToken', '')
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,43 @@
+meta {
+  name: 프로필 수정
+  type: graphql
+  seq: 9
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{accessToken}}
+}
+
+body:graphql {
+  mutation UpdateMyProfile($input: UpdateProfileInput!) {
+    updateMyProfile(input: $input) {
+      id
+      firstName
+      lastName
+      phone
+      emailAddress
+      updatedAt
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "input": {
+      "firstName": "길동",
+      "lastName": "홍",
+      "phone": "010-1234-5678"
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

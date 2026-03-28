@@ -1,0 +1,33 @@
+meta {
+  name: 내 정보 조회
+  type: graphql
+  seq: 8
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{accessToken}}
+}
+
+body:graphql {
+  query Me {
+    me {
+      id
+      identifier
+      verified
+      isActive
+      lastLogin
+      createdAt
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,31 @@
+meta {
+  name: 비밀번호 재설정
+  type: graphql
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+body:graphql {
+  mutation ResetPassword($input: ResetPasswordInput!) {
+    resetPassword(input: $input)
+  }
+}
+
+body:graphql:vars {
+  {
+    "input": {
+      "token": "비밀번호 재설정 토큰",
+      "newPassword": "newPassword123"
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

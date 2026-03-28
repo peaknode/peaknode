@@ -1,0 +1,44 @@
+meta {
+  name: 관리자 생성
+  type: graphql
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{accessToken}}
+}
+
+body:graphql {
+  mutation CreateAdminUser($input: CreateAdminUserInput!) {
+    createAdminUser(input: $input) {
+      id
+      identifier
+      verified
+      isActive
+      createdAt
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "input": {
+      "identifier": "admin@example.com",
+      "password": "securePass1",
+      "firstName": "길동",
+      "lastName": "홍",
+      "emailAddress": "admin@example.com"
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

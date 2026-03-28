@@ -1,0 +1,30 @@
+meta {
+  name: 비밀번호 재설정 요청
+  type: graphql
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+body:graphql {
+  mutation RequestPasswordReset($input: RequestPasswordResetInput!) {
+    requestPasswordReset(input: $input)
+  }
+}
+
+body:graphql:vars {
+  {
+    "input": {
+      "identifier": "user@example.com"
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

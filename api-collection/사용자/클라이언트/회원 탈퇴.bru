@@ -1,0 +1,33 @@
+meta {
+  name: 회원 탈퇴
+  type: graphql
+  seq: 11
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{accessToken}}
+}
+
+body:graphql {
+  mutation WithdrawAccount {
+    withdrawAccount
+  }
+}
+
+script:post-response {
+  if(res.getStatus() !== 200) return;
+
+  bru.setEnvVar('accessToken', '')
+  bru.setEnvVar('refreshToken', '')
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,35 @@
+meta {
+  name: 비밀번호 변경
+  type: graphql
+  seq: 10
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{accessToken}}
+}
+
+body:graphql {
+  mutation ChangePassword($input: ChangePasswordInput!) {
+    changePassword(input: $input)
+  }
+}
+
+body:graphql:vars {
+  {
+    "input": {
+      "currentPassword": "password123",
+      "newPassword": "newPassword123"
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

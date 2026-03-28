@@ -1,0 +1,40 @@
+meta {
+  name: 사용자 조회
+  type: graphql
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{accessToken}}
+}
+
+body:graphql {
+  query User($id: ID!) {
+    user(id: $id) {
+      id
+      identifier
+      verified
+      isActive
+      lastLogin
+      createdAt
+      updatedAt
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "id": "사용자 UUID"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,36 @@
+meta {
+  name: 액세스 토큰 재발급
+  type: graphql
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+body:graphql {
+  mutation RefreshToken($token: String!) {
+    refreshToken(token: $token)
+  }
+}
+
+body:graphql:vars {
+  {
+    "token": "{{refreshToken}}"
+  }
+}
+
+script:post-response {
+  if(res.getStatus() !== 200) return;
+
+  const accessToken = res.body.data.refreshToken;
+
+  bru.setEnvVar('accessToken', accessToken)
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

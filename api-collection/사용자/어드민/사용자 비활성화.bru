@@ -1,0 +1,37 @@
+meta {
+  name: 사용자 비활성화
+  type: graphql
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{accessToken}}
+}
+
+body:graphql {
+  mutation DeactivateUser($id: ID!) {
+    deactivateUser(id: $id) {
+      id
+      identifier
+      isActive
+      updatedAt
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "id": "사용자 UUID"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
