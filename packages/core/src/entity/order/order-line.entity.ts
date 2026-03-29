@@ -1,3 +1,4 @@
+import { Field, Int, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, Index, JoinColumn, ManyToMany, ManyToOne } from "typeorm";
 import { BaseEntity } from "../base/base.entity";
 import { ProductVariant } from "../product/product-variant.entity";
@@ -16,9 +17,11 @@ import { Order } from "./order.entity";
  * @example
  * // OrderLine: { quantity: 2, unitPrice: 29000, linePrice: 58000, sku: "TEE-WHITE-S" }
  */
+@ObjectType()
 @Entity("order_line")
 export class OrderLine extends BaseEntity {
   /** 주문 수량. */
+  @Field(() => Int)
   @Column({ type: "int" })
   quantity: number;
 
@@ -26,6 +29,7 @@ export class OrderLine extends BaseEntity {
    * 주문 시점 단가 (원 단위 정수).
    * ProductVariant.price의 스냅샷. 이후 가격 변경 영향을 받지 않는다.
    */
+  @Field(() => Int)
   @Column({ name: "unit_price", type: "int" })
   unitPrice: number;
 
@@ -33,6 +37,7 @@ export class OrderLine extends BaseEntity {
    * 라인 합계 금액 (원 단위 정수).
    * `unitPrice × quantity`로 계산된다.
    */
+  @Field(() => Int)
   @Column({ name: "line_price", type: "int" })
   linePrice: number;
 
@@ -41,6 +46,7 @@ export class OrderLine extends BaseEntity {
    * 예: "흰색 / S".
    * ProductVariant.name이 변경되어도 주문 내역은 이 값을 유지한다.
    */
+  @Field()
   @Column({ name: "product_variant_name" })
   productVariantName: string;
 
@@ -48,10 +54,12 @@ export class OrderLine extends BaseEntity {
    * 주문 시점 SKU 스냅샷.
    * ProductVariant.sku가 변경되어도 주문 내역은 이 값을 유지한다.
    */
+  @Field()
   @Column()
   sku: string;
 
   /** 소속 Order의 ID. */
+  @Field()
   @Column({ name: "order_id" })
   orderId: string;
 
@@ -65,6 +73,7 @@ export class OrderLine extends BaseEntity {
    * 연결된 ProductVariant의 ID.
    * 상품이 삭제되어도 주문 라인은 유지되므로 nullable로 설정하지 않는다.
    */
+  @Field()
   @Column({ name: "product_variant_id" })
   productVariantId: string;
 
@@ -82,6 +91,7 @@ export class OrderLine extends BaseEntity {
    * JoinTable 소유권은 {@link Fulfillment} 쪽에 있다.
    * 부분 배송 시 하나의 OrderLine이 여러 Fulfillment에 걸칠 수 있다.
    */
+  @Field(() => [Fulfillment])
   @ManyToMany(() => Fulfillment, (f) => f.lines)
   fulfillments: Fulfillment[];
 }

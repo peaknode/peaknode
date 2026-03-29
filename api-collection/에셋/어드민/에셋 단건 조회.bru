@@ -1,0 +1,52 @@
+meta {
+  name: 에셋 단건 조회
+  type: graphql
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{adminAccessToken}}
+}
+
+body:graphql {
+  query Asset($id: ID!) {
+    asset(id: $id) {
+      id
+      name
+      type
+      mimeType
+      fileSize
+      source
+      preview
+      width
+      height
+      focalPoint {
+        x
+        y
+      }
+      tags {
+        id
+        value
+      }
+      createdAt
+      updatedAt
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "id": "asset-uuid-here"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,34 @@
+meta {
+  name: 장바구니 비우기
+  type: graphql
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+body:graphql {
+  mutation ClearCart($token: String!) {
+    clearCart(token: $token) {
+      id
+      token
+      items {
+        id
+      }
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "token": "guest-cart-token-here"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,3 +1,4 @@
+import { Field, Int, ObjectType, registerEnumType } from "@nestjs/graphql";
 import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
 import { BaseEntity } from "../base/base.entity";
 import { Order } from "./order.entity";
@@ -25,6 +26,8 @@ export enum PaymentState {
   ERROR = "ERROR",
 }
 
+registerEnumType(PaymentState, { name: "PaymentState" });
+
 /**
  * 결제 엔터티.
  *
@@ -34,6 +37,7 @@ export enum PaymentState {
  *
  * PG사 응답 데이터는 `metadata`에 원본 그대로 보존해 감사 추적에 활용한다.
  */
+@ObjectType()
 @Entity("payment")
 export class Payment extends BaseEntity {
   /**
@@ -41,6 +45,7 @@ export class Payment extends BaseEntity {
    * enum 대신 string으로 관리해 PG사 확장이 용이하다.
    * 예: "card", "bank_transfer", "kakao_pay", "naver_pay", "toss".
    */
+  @Field()
   @Column()
   method: string;
 
@@ -48,6 +53,7 @@ export class Payment extends BaseEntity {
    * 결제 금액 (원 단위 정수).
    * Order.total과 다를 수 있다 (부분 결제, 재시도 금액 조정 등).
    */
+  @Field(() => Int)
   @Column({ type: "int" })
   amount: number;
 
@@ -55,6 +61,7 @@ export class Payment extends BaseEntity {
    * 현재 결제 상태.
    * 상태별 조회(미완료 결제, 환불 등)에 자주 사용되므로 인덱스를 추가한다.
    */
+  @Field(() => PaymentState)
   @Index()
   @Column({ name: "state", type: "enum", enum: PaymentState, default: PaymentState.PENDING })
   state: PaymentState;
@@ -64,6 +71,7 @@ export class Payment extends BaseEntity {
    * 결제 취소·환불 요청 시 PG사 API에 전달한다.
    * 결제 시도 전(PENDING) 또는 오류 시 null.
    */
+  @Field({ nullable: true })
   @Column({ name: "transaction_id", nullable: true })
   transactionId: string | null;
 
@@ -71,6 +79,7 @@ export class Payment extends BaseEntity {
    * 오류 메시지.
    * DECLINED 또는 ERROR 상태일 때 PG사로부터 받은 오류 설명.
    */
+  @Field({ nullable: true })
   @Column({ name: "error_message", nullable: true })
   errorMessage: string | null;
 
@@ -83,6 +92,7 @@ export class Payment extends BaseEntity {
   metadata: Record<string, unknown> | null;
 
   /** 소속 Order의 ID. */
+  @Field()
   @Column({ name: "order_id" })
   orderId: string;
 

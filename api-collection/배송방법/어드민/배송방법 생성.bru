@@ -1,0 +1,46 @@
+meta {
+  name: 배송방법 생성
+  type: graphql
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{adminAccessToken}}
+}
+
+body:graphql {
+  mutation CreateShippingMethod($input: CreateShippingMethodDto!) {
+    createShippingMethod(input: $input) {
+      id
+      name
+      code
+      price
+      freeShippingThreshold
+      enabled
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "input": {
+      "name": "기본 배송",
+      "code": "standard",
+      "price": 3000,
+      "freeShippingThreshold": 50000,
+      "description": "영업일 기준 2~3일 내 도착",
+      "enabled": true
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

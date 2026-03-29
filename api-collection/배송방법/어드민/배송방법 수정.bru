@@ -1,0 +1,43 @@
+meta {
+  name: 배송방법 수정
+  type: graphql
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{adminAccessToken}}
+}
+
+body:graphql {
+  mutation UpdateShippingMethod($id: ID!, $input: UpdateShippingMethodDto!) {
+    updateShippingMethod(id: $id, input: $input) {
+      id
+      name
+      code
+      price
+      freeShippingThreshold
+      enabled
+      updatedAt
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "id": "shipping-method-uuid-here",
+    "input": {
+      "enabled": false
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

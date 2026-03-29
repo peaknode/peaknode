@@ -1,0 +1,32 @@
+meta {
+  name: 배송방법 삭제
+  type: graphql
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{adminAccessToken}}
+}
+
+body:graphql {
+  mutation DeleteShippingMethod($id: ID!) {
+    deleteShippingMethod(id: $id)
+  }
+}
+
+body:graphql:vars {
+  {
+    "id": "shipping-method-uuid-here"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,44 @@
+meta {
+  name: 장바구니 아이템 추가
+  type: graphql
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+body:graphql {
+  mutation AddItemToCart($token: String!, $input: AddCartItemDto!) {
+    addItemToCart(token: $token, input: $input) {
+      id
+      token
+      items {
+        id
+        quantity
+        productVariant {
+          id
+          name
+          price
+        }
+      }
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "token": "guest-cart-token-here",
+    "input": {
+      "productVariantId": "product-variant-uuid-here",
+      "quantity": 2
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

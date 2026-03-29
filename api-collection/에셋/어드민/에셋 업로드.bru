@@ -1,0 +1,24 @@
+meta {
+  name: 에셋 업로드
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/admin-api/assets/upload
+  body: multipartForm
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{adminAccessToken}}
+}
+
+body:multipart-form {
+  file: @file()
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

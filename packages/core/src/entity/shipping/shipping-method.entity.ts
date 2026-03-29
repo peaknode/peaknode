@@ -1,3 +1,4 @@
+import { Field, Int, ObjectType } from "@nestjs/graphql";
 import { Column, Entity } from "typeorm";
 import { BaseEntity } from "../base/base.entity";
 
@@ -18,12 +19,14 @@ import { BaseEntity } from "../base/base.entity";
  * // 프리미엄 배송: price=5000, freeShippingThreshold=null
  * // → 항상 ₩5,000
  */
+@ObjectType()
 @Entity("shipping_method")
 export class ShippingMethod extends BaseEntity {
   /**
    * 배송 방법 표시명.
    * 예: "기본 배송", "빠른 배송", "새벽 배송".
    */
+  @Field()
   @Column()
   name: string;
 
@@ -32,6 +35,7 @@ export class ShippingMethod extends BaseEntity {
    * 영문 소문자와 하이픈 사용을 권장한다.
    * 예: "standard", "express", "overnight".
    */
+  @Field()
   @Column({ unique: true })
   code: string;
 
@@ -40,6 +44,7 @@ export class ShippingMethod extends BaseEntity {
    * 예: "영업일 기준 2~3일 내 도착".
    * null이면 설명 없음.
    */
+  @Field({ nullable: true })
   @Column({ type: "text", nullable: true })
   description: string | null;
 
@@ -47,6 +52,7 @@ export class ShippingMethod extends BaseEntity {
    * 배송 방법 활성화 여부.
    * false이면 고객이 해당 배송 방법을 선택할 수 없다.
    */
+  @Field()
   @Column({ default: true })
   enabled: boolean;
 
@@ -55,6 +61,7 @@ export class ShippingMethod extends BaseEntity {
    * 0이면 무조건 무료 배송.
    * `freeShippingThreshold` 조건 충족 시 이 값 대신 0이 적용된다.
    */
+  @Field(() => Int)
   @Column({ type: "int", default: 0 })
   price: number;
 
@@ -67,6 +74,7 @@ export class ShippingMethod extends BaseEntity {
    * // freeShippingThreshold=50000 → ₩50,000 이상 구매 시 무료
    * // freeShippingThreshold=null  → 항상 price 적용
    */
+  @Field(() => Int, { nullable: true })
   @Column({ name: "free_shipping_threshold", type: "int", nullable: true })
   freeShippingThreshold: number | null;
 }

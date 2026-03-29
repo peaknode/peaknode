@@ -102,4 +102,24 @@ export enum Permission {
   CollectionUpdate = "collection:update",
   /** 컬렉션 삭제 */
   CollectionDelete = "collection:delete",
+
+  // ─── ShippingMethod ────────────────────────────────────────────────────────
+  /** 배송 방법 생성 */
+  ShippingMethodCreate = "shipping-method:create",
+  /** 배송 방법 목록/단건 조회 */
+  ShippingMethodRead = "shipping-method:read",
+  /** 배송 방법 수정 */
+  ShippingMethodUpdate = "shipping-method:update",
+  /** 배송 방법 삭제 */
+  ShippingMethodDelete = "shipping-method:delete",
+
+  // ─── Promotion ─────────────────────────────────────────────────────────────
+  /** 프로모션 생성 */
+  PromotionCreate = "promotion:create",
+  /** 프로모션 목록/단건 조회 */
+  PromotionRead = "promotion:read",
+  /** 프로모션 수정 */
+  PromotionUpdate = "promotion:update",
+  /** 프로모션 삭제 */
+  PromotionDelete = "promotion:delete",
 }

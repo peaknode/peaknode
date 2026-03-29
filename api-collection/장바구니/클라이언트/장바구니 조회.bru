@@ -1,0 +1,44 @@
+meta {
+  name: 장바구니 조회
+  type: graphql
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+body:graphql {
+  query Cart($token: String!) {
+    cart(token: $token) {
+      id
+      token
+      customerId
+      items {
+        id
+        quantity
+        productVariant {
+          id
+          name
+          sku
+          price
+          stockOnHand
+          stockAllocated
+        }
+      }
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "token": "guest-cart-token-here"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,45 @@
+meta {
+  name: 게스트 장바구니 병합
+  type: graphql
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{accessToken}}
+}
+
+body:graphql {
+  mutation MergeCart($guestToken: String!) {
+    mergeCart(guestToken: $guestToken) {
+      id
+      token
+      customerId
+      items {
+        id
+        quantity
+        productVariant {
+          id
+          name
+          price
+        }
+      }
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "guestToken": "guest-cart-token-here"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -2,6 +2,11 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input AddCartItemDto {
+  productVariantId: ID!
+  quantity: Int!
+}
+
 type Asset {
   createdAt: DateTime
   deletedAt: DateTime
@@ -18,6 +23,11 @@ type Asset {
   width: Int
 }
 
+type AssetListResult {
+  items: [Asset!]!
+  total: Int!
+}
+
 enum AssetType {
   AUDIO
   BINARY
@@ -30,6 +40,27 @@ type AuthResult {
   accessToken: String!
   refreshToken: String!
   user: User!
+}
+
+type Cart {
+  createdAt: DateTime
+  customerId: String
+  deletedAt: DateTime
+  id: ID!
+  items: [CartItem!]!
+  token: String!
+  updatedAt: DateTime
+}
+
+type CartItem {
+  cartId: String!
+  createdAt: DateTime
+  deletedAt: DateTime
+  id: ID!
+  productVariant: ProductVariant!
+  productVariantId: String!
+  quantity: Int!
+  updatedAt: DateTime
 }
 
 input ChangePasswordInput {
@@ -122,6 +153,15 @@ input CreateRoleInput {
   permissions: [String!]!
 }
 
+input CreateShippingMethodDto {
+  code: String!
+  description: String
+  enabled: Boolean
+  freeShippingThreshold: Int
+  name: String!
+  price: Int
+}
+
 type CustomFieldDefinition {
   createdAt: DateTime
   defaultValue: JSON
@@ -199,8 +239,39 @@ type FocalPoint {
   y: Float!
 }
 
+input FocalPointInput {
+  x: Float!
+  y: Float!
+}
+
+type Fulfillment {
+  createdAt: DateTime
+  deletedAt: DateTime
+  id: ID!
+  lines: [OrderLine!]!
+  orderId: String!
+  shippingCarrier: String
+  state: FulfillmentState!
+  trackingCode: String
+  updatedAt: DateTime
+}
+
+enum FulfillmentState {
+  CANCELLED
+  DELIVERED
+  PENDING
+  SHIPPED
+}
+
 """JSON 스칼라 타입 - 임의의 JSON 값을 직렬화/역직렬화한다"""
 scalar JSON
+
+input ListAssetsDto {
+  search: String
+  skip: Int
+  take: Int
+  type: AssetType
+}
 
 input ListProductsDto {
   collectionId: ID
@@ -211,12 +282,21 @@ input ListProductsDto {
   take: Int
 }
 
+input ListShippingMethodsDto {
+  enabled: Boolean
+  skip: Int
+  take: Int
+}
+
 input LoginInput {
   identifier: String!
   password: String!
 }
 
 type Mutation {
+  """장바구니에 상품 추가"""
+  addItemToCart(input: AddCartItemDto!, token: String!): Cart!
+
   """상품에 옵션그룹 추가"""
   addOptionGroupToProduct(optionGroupId: ID!, productId: ID!): Product!
 
@@ -225,6 +305,9 @@ type Mutation {
 
   """비밀번호 변경"""
   changePassword(input: ChangePasswordInput!): Boolean!
+
+  """장바구니 비우기"""
+  clearCart(token: String!): Cart!
 
   """관리자 사용자 생성"""
   createAdminUser(input: CreateAdminUserInput!): User!
@@ -245,8 +328,14 @@ type Mutation {
   """역할 생성"""
   createRole(input: CreateRoleInput!): Role!
 
+  """배송 방법 생성"""
+  createShippingMethod(input: CreateShippingMethodDto!): ShippingMethod!
+
   """사용자 비활성화"""
   deactivateUser(id: ID!): User!
+
+  """에셋 소프트 딜리트"""
+  deleteAsset(id: ID!): Boolean!
   deleteCustomFieldDefinition(id: ID!): Boolean!
 
   """상품 소프트 딜리트"""
@@ -261,6 +350,9 @@ type Mutation {
   """역할 삭제"""
   deleteRole(id: ID!): Boolean!
 
+  """배송 방법 소프트 딜리트"""
+  deleteShippingMethod(id: ID!): Boolean!
+
   """관리자 로그인 (JWT 발급)"""
   loginAsAdmin(input: LoginInput!): AuthResult!
 
@@ -270,11 +362,17 @@ type Mutation {
   """로그아웃 (기존 토큰 전체 무효화)"""
   logout: Boolean!
 
+  """게스트 장바구니를 회원 장바구니로 병합"""
+  mergeCart(guestToken: String!): Cart!
+
   """리프레시 토큰으로 새 액세스 토큰 발급"""
   refreshToken(token: String!): String!
 
   """고객 회원가입 후 JWT 발급"""
   register(input: CreateCustomerUserInput!): AuthResult!
+
+  """장바구니 아이템 삭제"""
+  removeCartItem(cartItemId: ID!, token: String!): Cart!
 
   """상품에서 옵션그룹 제거"""
   removeOptionGroupFromProduct(force: Boolean = false, optionGroupId: ID!, productId: ID!): Product!
@@ -290,6 +388,12 @@ type Mutation {
 
   """비밀번호 재설정"""
   resetPassword(input: ResetPasswordInput!): Boolean!
+
+  """에셋 수정 (name/focalPoint/tags)"""
+  updateAsset(id: ID!, input: UpdateAssetDto!): Asset!
+
+  """장바구니 아이템 수량 변경 (0이면 삭제)"""
+  updateCartItemQuantity(cartItemId: ID!, input: UpdateCartItemDto!, token: String!): Cart!
   updateCustomFieldDefinition(id: ID!, input: UpdateCustomFieldDefinitionDto!): CustomFieldDefinition!
 
   """고객 프로필 수정 (이름, 전화번호 등)"""
@@ -310,11 +414,60 @@ type Mutation {
   """역할 수정"""
   updateRole(id: ID!, input: UpdateRoleInput!): Role!
 
+  """배송 방법 수정"""
+  updateShippingMethod(id: ID!, input: UpdateShippingMethodDto!): ShippingMethod!
+
   """이메일 인증"""
   verifyEmail(token: String!): Boolean!
 
   """회원 탈퇴 (계정 비활성화)"""
   withdrawAccount: Boolean!
+}
+
+type OrderAddressType {
+  addressLine1: String!
+  addressLine2: String!
+  fullName: String!
+  phoneNumber: String!
+  postalCode: String!
+}
+
+type OrderLine {
+  createdAt: DateTime
+  deletedAt: DateTime
+  fulfillments: [Fulfillment!]!
+  id: ID!
+  linePrice: Int!
+  orderId: String!
+  productVariantId: String!
+  productVariantName: String!
+  quantity: Int!
+  sku: String!
+  unitPrice: Int!
+  updatedAt: DateTime
+}
+
+type Payment {
+  amount: Int!
+  createdAt: DateTime
+  deletedAt: DateTime
+  errorMessage: String
+  id: ID!
+  method: String!
+  orderId: String!
+  state: PaymentState!
+  transactionId: String
+  updatedAt: DateTime
+}
+
+enum PaymentState {
+  AUTHORIZED
+  CANCELLED
+  DECLINED
+  ERROR
+  PENDING
+  REFUNDED
+  SETTLED
 }
 
 type Product {
@@ -410,6 +563,17 @@ type ProductVariantAsset {
 }
 
 type Query {
+  """ID로 에셋 단건 조회"""
+  asset(id: ID!): Asset!
+
+  """에셋 목록 조회 (페이지네이션)"""
+  assets(options: ListAssetsDto): AssetListResult!
+
+  """선택 가능한 배송 방법 목록 (enabled=true)"""
+  availableShippingMethods: [ShippingMethod!]!
+
+  """장바구니 조회 (없으면 생성)"""
+  cart(token: String!): Cart!
   customFieldDefinition(id: ID!): CustomFieldDefinition!
   customFieldDefinitions(entityName: CustomFieldEntityName!): [CustomFieldDefinition!]!
 
@@ -430,6 +594,12 @@ type Query {
 
   """역할 목록 조회"""
   roles: RoleListResult!
+
+  """ID로 배송 방법 단건 조회"""
+  shippingMethod(id: ID!): ShippingMethod!
+
+  """배송 방법 목록 조회"""
+  shippingMethods(options: ListShippingMethodsDto): ShippingMethodListResult!
 
   """ID로 사용자 단건 조회"""
   user(id: ID!): User
@@ -457,6 +627,34 @@ type Role {
 type RoleListResult {
   items: [Role!]!
   total: Int!
+}
+
+type ShippingMethod {
+  code: String!
+  createdAt: DateTime
+  deletedAt: DateTime
+  description: String
+  enabled: Boolean!
+  freeShippingThreshold: Int
+  id: ID!
+  name: String!
+  price: Int!
+  updatedAt: DateTime
+}
+
+type ShippingMethodListResult {
+  items: [ShippingMethod!]!
+  total: Int!
+}
+
+input UpdateAssetDto {
+  focalPoint: FocalPointInput
+  name: String
+  tagIds: [ID!]
+}
+
+input UpdateCartItemDto {
+  quantity: Int!
 }
 
 input UpdateCustomFieldDefinitionDto {
@@ -511,6 +709,15 @@ input UpdateRoleInput {
   permissions: [String!]
 }
 
+input UpdateShippingMethodDto {
+  code: String
+  description: String
+  enabled: Boolean
+  freeShippingThreshold: Int
+  name: String
+  price: Int
+}
+
 type User {
   createdAt: DateTime
   customFields: JSON
@@ -521,4 +728,16 @@ type User {
   lastLogin: DateTime
   updatedAt: DateTime
   verified: Boolean!
+}
+
+type WishlistItem {
+  createdAt: DateTime
+  deletedAt: DateTime
+  id: ID!
+  product: Product!
+  productId: String!
+  productVariant: ProductVariant
+  productVariantId: String
+  updatedAt: DateTime
+  wishlistId: String!
 }

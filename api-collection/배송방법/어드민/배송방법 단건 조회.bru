@@ -1,0 +1,42 @@
+meta {
+  name: 배송방법 단건 조회
+  type: graphql
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{adminAccessToken}}
+}
+
+body:graphql {
+  query ShippingMethod($id: ID!) {
+    shippingMethod(id: $id) {
+      id
+      name
+      code
+      price
+      freeShippingThreshold
+      enabled
+      description
+      createdAt
+      updatedAt
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "id": "shipping-method-uuid-here"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

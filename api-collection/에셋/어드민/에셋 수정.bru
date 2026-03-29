@@ -1,0 +1,51 @@
+meta {
+  name: 에셋 수정
+  type: graphql
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{adminAccessToken}}
+}
+
+body:graphql {
+  mutation UpdateAsset($id: ID!, $input: UpdateAssetDto!) {
+    updateAsset(id: $id, input: $input) {
+      id
+      name
+      focalPoint {
+        x
+        y
+      }
+      tags {
+        id
+        value
+      }
+      updatedAt
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "id": "asset-uuid-here",
+    "input": {
+      "name": "수정된 에셋 이름",
+      "focalPoint": {
+        "x": 0.5,
+        "y": 0.3
+      }
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

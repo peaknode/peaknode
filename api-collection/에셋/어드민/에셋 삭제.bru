@@ -1,0 +1,32 @@
+meta {
+  name: 에셋 삭제
+  type: graphql
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{adminAccessToken}}
+}
+
+body:graphql {
+  mutation DeleteAsset($id: ID!) {
+    deleteAsset(id: $id)
+  }
+}
+
+body:graphql:vars {
+  {
+    "id": "asset-uuid-here"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

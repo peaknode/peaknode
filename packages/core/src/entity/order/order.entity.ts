@@ -1,3 +1,4 @@
+import { Field, GraphQLISODateTime, Int, ObjectType, registerEnumType } from "@nestjs/graphql";
 import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany } from "typeorm";
 import { BaseEntity } from "../base/base.entity";
 import { Customer } from "../customer/customer.entity";
@@ -30,6 +31,8 @@ export enum OrderState {
   REFUNDED = "REFUNDED",
 }
 
+registerEnumType(OrderState, { name: "OrderState" });
+
 /**
  * 배송지 주소 스냅샷 인터페이스.
  *
@@ -50,6 +53,33 @@ export interface OrderAddress {
 }
 
 /**
+ * 배송지 주소 스냅샷 GraphQL ObjectType.
+ * `simple-json` 컬럼으로 저장된 {@link OrderAddress}를 GraphQL 타입으로 노출한다.
+ */
+@ObjectType("OrderAddressType")
+export class OrderAddressType {
+  /** 수령인 이름. */
+  @Field()
+  fullName: string;
+
+  /** 도로명 주소 또는 지번 주소. */
+  @Field()
+  addressLine1: string;
+
+  /** 상세 주소 (동/호수 등). */
+  @Field()
+  addressLine2: string;
+
+  /** 우편번호. */
+  @Field()
+  postalCode: string;
+
+  /** 수령인 연락처. */
+  @Field()
+  phoneNumber: string;
+}
+
+/**
  * 주문 엔터티.
  *
  * 커머스 시스템의 핵심 엔터티로, 장바구니(PENDING)부터 배송 완료(DELIVERED)까지
@@ -63,6 +93,7 @@ export interface OrderAddress {
  * // 4. 결제 완료 → PAID
  * // 5. 출고 처리 → SHIPPED → DELIVERED
  */
+@ObjectType()
 @Entity("order")
 export class Order extends BaseEntity {
   /**
@@ -70,6 +101,7 @@ export class Order extends BaseEntity {
    * 예: "ORD-20240323-0001".
    * 생성 로직은 서비스 레이어에서 처리한다.
    */
+  @Field()
   @Column({ unique: true })
   code: string;
 
@@ -77,6 +109,7 @@ export class Order extends BaseEntity {
    * 현재 주문 상태.
    * 주문 목록 필터링(미결제, 배송중 등)에 자주 사용되므로 인덱스를 추가한다.
    */
+  @Field(() => OrderState)
   @Index()
   @Column({ name: "state", type: "enum", enum: OrderState, default: OrderState.PENDING })
   state: OrderState;
@@ -85,6 +118,7 @@ export class Order extends BaseEntity {
    * 상품 합계 금액 (원 단위 정수).
    * 쿠폰/할인 적용 전 순수 상품 금액.
    */
+  @Field(() => Int)
   @Column({ name: "sub_total", type: "int", default: 0 })
   subTotal: number;
 
@@ -92,6 +126,7 @@ export class Order extends BaseEntity {
    * 배송비 (원 단위 정수).
    * 무료 배송이면 0.
    */
+  @Field(() => Int)
   @Column({ name: "shipping_total", type: "int", default: 0 })
   shippingTotal: number;
 
@@ -99,6 +134,7 @@ export class Order extends BaseEntity {
    * 할인 금액 합계 (원 단위 정수).
    * 쿠폰, 프로모션 등 모든 할인의 합.
    */
+  @Field(() => Int)
   @Column({ name: "discount_total", type: "int", default: 0 })
   discountTotal: number;
 
@@ -106,6 +142,7 @@ export class Order extends BaseEntity {
    * 최종 결제 금액 (원 단위 정수).
    * `subTotal + shippingTotal - discountTotal`로 계산한다.
    */
+  @Field(() => Int)
   @Column({ type: "int", default: 0 })
   total: number;
 
@@ -113,6 +150,7 @@ export class Order extends BaseEntity {
    * 주문 상품 총 수량.
    * 모든 OrderLine의 quantity 합계.
    */
+  @Field(() => Int)
   @Column({ name: "total_quantity", type: "int", default: 0 })
   totalQuantity: number;
 
@@ -121,6 +159,7 @@ export class Order extends BaseEntity {
    * FK가 아닌 JSON으로 저장해 이후 주소 변경 영향을 받지 않는다.
    * 주문 확정 전(PENDING)이면 null일 수 있다.
    */
+  @Field(() => OrderAddressType, { nullable: true })
   @Column({ name: "shipping_address", type: "simple-json", nullable: true })
   shippingAddress: OrderAddress | null;
 
@@ -128,6 +167,7 @@ export class Order extends BaseEntity {
    * 선택된 배송 방법의 ID.
    * null이면 배송 방법 미선택 (PENDING 단계).
    */
+  @Field({ nullable: true })
   @Column({ name: "shipping_method_id", nullable: true })
   shippingMethodId: string | null;
 
@@ -145,6 +185,7 @@ export class Order extends BaseEntity {
    * 적용된 쿠폰 코드 (입력값 원본).
    * null이면 쿠폰 미사용.
    */
+  @Field({ nullable: true })
   @Column({ name: "coupon_code", nullable: true })
   couponCode: string | null;
 
@@ -152,6 +193,7 @@ export class Order extends BaseEntity {
    * 적용된 프로모션의 ID.
    * null이면 프로모션 미적용.
    */
+  @Field({ nullable: true })
   @Column({ name: "promotion_id", nullable: true })
   promotionId: string | null;
 
@@ -168,6 +210,7 @@ export class Order extends BaseEntity {
    * 주문한 고객의 ID.
    * null이면 게스트 주문.
    */
+  @Field({ nullable: true })
   @Column({ name: "customer_id", nullable: true })
   customerId: string | null;
 
@@ -184,14 +227,17 @@ export class Order extends BaseEntity {
    * 주문 라인 목록.
    * cascade가 활성화되어 Order 저장 시 OrderLine도 함께 저장된다.
    */
+  @Field(() => [OrderLine])
   @OneToMany(() => OrderLine, (line) => line.order, { cascade: true })
   lines: OrderLine[];
 
   /** 이 주문의 결제 기록 목록. */
+  @Field(() => [Payment])
   @OneToMany(() => Payment, (p) => p.order)
   payments: Payment[];
 
   /** 이 주문의 배송(출고) 기록 목록. */
+  @Field(() => [Fulfillment])
   @OneToMany(() => Fulfillment, (f) => f.order)
   fulfillments: Fulfillment[];
 }

@@ -1,3 +1,4 @@
+import { Field, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
 import { BaseEntity } from "../base/base.entity";
 import { Product } from "../product/product.entity";
@@ -15,9 +16,11 @@ import { Wishlist } from "./wishlist.entity";
  * // 옵션 미선택: productId="xxx", productVariantId=null
  * // 특정 색상/사이즈 선택: productId="xxx", productVariantId="yyy"
  */
+@ObjectType()
 @Entity("wishlist_item")
 export class WishlistItem extends BaseEntity {
   /** 소속 위시리스트의 ID. */
+  @Field()
   @Column({ name: "wishlist_id" })
   wishlistId: string;
 
@@ -28,10 +31,12 @@ export class WishlistItem extends BaseEntity {
   wishlist: Wishlist;
 
   /** 담긴 상품의 ID. */
+  @Field()
   @Column({ name: "product_id" })
   productId: string;
 
   /** 담긴 상품. */
+  @Field(() => Product)
   @Index()
   @ManyToOne(() => Product)
   @JoinColumn({ name: "product_id" })
@@ -41,6 +46,7 @@ export class WishlistItem extends BaseEntity {
    * 선택된 상품 변형(SKU)의 ID.
    * null이면 특정 옵션을 선택하지 않은 상태.
    */
+  @Field({ nullable: true })
   @Column({ name: "product_variant_id", nullable: true })
   productVariantId: string | null;
 
@@ -48,6 +54,7 @@ export class WishlistItem extends BaseEntity {
    * 선택된 상품 변형(SKU).
    * null이면 옵션 미선택.
    */
+  @Field(() => ProductVariant, { nullable: true })
   @ManyToOne(() => ProductVariant, { nullable: true })
   @JoinColumn({ name: "product_variant_id" })
   productVariant: ProductVariant | null;
