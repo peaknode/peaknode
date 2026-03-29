@@ -61,41 +61,41 @@
 
 ### 3. Cart (장바구니)
 
-- [ ] `src/service/cart/cart.service.ts`
-  - [ ] `getOrCreateCart(token, customerId?)` — 게스트/회원 공용
-  - [ ] `addItem(token, productVariantId, quantity)` — 재고 검증 + 수량 병합
-  - [ ] `updateItemQuantity(token, cartItemId, quantity)` — 0이면 삭제
-  - [ ] `removeItem(token, cartItemId)`, `clearCart(token)`
-  - [ ] `mergeGuestCart(guestToken, customerId)` — 로그인 시 병합
-  - [ ] `calculateCartTotals(cart)` — 순수 함수
-- [ ] `src/service/dto/cart/add-cart-item.dto.ts`
-- [ ] `src/service/dto/cart/update-cart-item.dto.ts`
-- [ ] `src/api/shop-api/cart/shop-cart.resolver.ts`
-  - [ ] `cart(token)` — 공개 쿼리
-  - [ ] `addItemToCart`, `updateCartItemQuantity`, `removeCartItem`, `clearCart`
-  - [ ] `mergeCart(guestToken)` — JwtAuthGuard
-- [ ] 모듈 등록: `service.module.ts`, `shop-api.module.ts`
-- [ ] Bruno: `api-collection/장바구니/클라이언트/` 6개
+- [x] `src/service/cart/cart.service.ts`
+  - [x] `getOrCreateCart(token, customerId?)` — 게스트/회원 공용
+  - [x] `addItem(token, productVariantId, quantity)` — 재고 검증 + 수량 병합
+  - [x] `updateItemQuantity(token, cartItemId, quantity)` — 0이면 삭제
+  - [x] `removeItem(token, cartItemId)`, `clearCart(token)`
+  - [x] `mergeGuestCart(guestToken, customerId)` — 로그인 시 병합
+  - [x] `calculateCartTotals(cart)` — 순수 함수
+- [x] `src/service/dto/cart/add-cart-item.dto.ts`
+- [x] `src/service/dto/cart/update-cart-item.dto.ts`
+- [x] `src/api/shop-api/cart/shop-cart.resolver.ts`
+  - [x] `cart(token)` — 공개 쿼리
+  - [x] `addItemToCart`, `updateCartItemQuantity`, `removeCartItem`, `clearCart`
+  - [x] `mergeCart(guestToken)` — JwtAuthGuard
+- [x] 모듈 등록: `service.module.ts`, `shop-api.module.ts`
+- [x] Bruno: `api-collection/장바구니/클라이언트/` 6개
 
 ### 4. Order/Checkout (주문) — Cart + ShippingMethod 완료 후 진행
 
-- [ ] `src/service/order/order.service.ts`
-  - [ ] `checkout(cartToken, dto)` — Cart→Order 변환, 재고 확정(stockAllocated)
-  - [ ] `transitionToState(id, state)` — 상태 전환 검증 + 재고 복원(취소)
-  - [ ] `addPayment(orderId, dto)`, `settlePayment(paymentId, transactionId)`
-  - [ ] `createFulfillment(orderId, dto)`, `updateFulfillment(id, dto)`
-  - [ ] `findAll(options)`, `findOne(id)`, `findByCustomer(customerId, options)`
-- [ ] `src/service/dto/order/checkout.dto.ts`
-- [ ] `src/service/dto/order/list-orders.dto.ts`
-- [ ] `src/service/dto/order/add-payment.dto.ts`
-- [ ] `src/service/dto/order/create-fulfillment.dto.ts`
-- [ ] `src/service/dto/order/update-fulfillment.dto.ts`
-- [ ] `src/api/admin-api/order/order.resolver.ts` — 목록/단건/상태변경/결제/배송
-- [ ] `src/api/shop-api/order/shop-order.resolver.ts` — `checkout`, `myOrders`, `myOrder`
-- [ ] `src/api/types/order-list-result.type.ts`
-- [ ] `src/api/types/order-address.type.ts`
-- [ ] 모듈 등록: `service.module.ts`, `admin-api.module.ts`, `shop-api.module.ts`
-- [ ] Bruno: `api-collection/주문/어드민/` 7개, `클라이언트/` 3개
+- [x] `src/service/order/order.service.ts`
+  - [x] `checkout(cartToken, dto)` — Cart→Order 변환, 재고 확정(stockAllocated)
+  - [x] `transitionToState(id, state)` — 상태 전환 검증 + 재고 복원(취소)
+  - [x] `addPayment(orderId, dto)`, `settlePayment(paymentId, transactionId)`
+  - [x] `createFulfillment(orderId, dto)`, `updateFulfillment(id, dto)`
+  - [x] `findAll(options)`, `findOne(id)`, `findByCustomer(customerId, options)`
+- [x] `src/service/dto/order/checkout.dto.ts`
+- [x] `src/service/dto/order/list-orders.dto.ts`
+- [x] `src/service/dto/order/add-payment.dto.ts`
+- [x] `src/service/dto/order/create-fulfillment.dto.ts`
+- [x] `src/service/dto/order/update-fulfillment.dto.ts`
+- [x] `src/api/admin-api/order/order.resolver.ts` — 목록/단건/상태변경/결제/배송
+- [x] `src/api/shop-api/order/shop-order.resolver.ts` — `checkout`, `myOrders`, `myOrder`
+- [x] `src/api/types/order-list-result.type.ts`
+- [x] `src/api/types/order-address.type.ts`
+- [x] 모듈 등록: `service.module.ts`, `admin-api.module.ts`, `shop-api.module.ts`
+- [x] Bruno: `api-collection/주문/어드민/` 7개, `클라이언트/` 3개
 
 ---
 
