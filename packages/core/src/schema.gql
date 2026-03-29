@@ -7,6 +7,13 @@ input AddCartItemDto {
   quantity: Int!
 }
 
+input AddPaymentDto {
+  amount: Int
+  metadata: JSON
+  method: String!
+  transactionId: String
+}
+
 type Asset {
   createdAt: DateTime
   deletedAt: DateTime
@@ -111,6 +118,12 @@ input CreateCustomerUserInput {
   lastName: String!
   password: String!
   phone: String
+}
+
+input CreateFulfillmentDto {
+  orderLineIds: [ID!]!
+  shippingCarrier: String
+  trackingCode: String
 }
 
 input CreateProductDto {
@@ -273,6 +286,13 @@ input ListAssetsDto {
   type: AssetType
 }
 
+input ListOrdersDto {
+  customerId: String
+  skip: Int
+  state: OrderState
+  take: Int
+}
+
 input ListProductsDto {
   collectionId: ID
   enabled: Boolean
@@ -300,6 +320,9 @@ type Mutation {
   """상품에 옵션그룹 추가"""
   addOptionGroupToProduct(optionGroupId: ID!, productId: ID!): Product!
 
+  """주문에 결제 추가 (AUTHORIZED 상태로 생성)"""
+  addPaymentToOrder(input: AddPaymentDto!, orderId: ID!): Payment!
+
   """상품 갤러리에 이미지 추가"""
   addProductAsset(assetId: ID!, productId: ID!): Product!
 
@@ -312,6 +335,9 @@ type Mutation {
   """관리자 사용자 생성"""
   createAdminUser(input: CreateAdminUserInput!): User!
   createCustomFieldDefinition(input: CreateCustomFieldDefinitionDto!): CustomFieldDefinition!
+
+  """배송(출고) 생성 → Order 상태 SHIPPED 전환"""
+  createOrderFulfillment(input: CreateFulfillmentDto!, orderId: ID!): Fulfillment!
 
   """상품 생성"""
   createProduct(input: CreateProductDto!): Product!
@@ -389,6 +415,12 @@ type Mutation {
   """비밀번호 재설정"""
   resetPassword(input: ResetPasswordInput!): Boolean!
 
+  """결제 정산 처리 → Order 상태 PAID 전환"""
+  settleOrderPayment(paymentId: ID!, transactionId: String!): Payment!
+
+  """주문 상태 전환"""
+  transitionOrderToState(id: ID!, state: OrderState!): Order!
+
   """에셋 수정 (name/focalPoint/tags)"""
   updateAsset(id: ID!, input: UpdateAssetDto!): Asset!
 
@@ -398,6 +430,9 @@ type Mutation {
 
   """고객 프로필 수정 (이름, 전화번호 등)"""
   updateMyProfile(input: UpdateProfileInput!): Customer!
+
+  """배송 정보 수정"""
+  updateOrderFulfillment(id: ID!, input: UpdateFulfillmentDto!): Fulfillment!
 
   """상품 수정"""
   updateProduct(id: ID!, input: UpdateProductDto!): Product!
@@ -424,6 +459,28 @@ type Mutation {
   withdrawAccount: Boolean!
 }
 
+type Order {
+  code: String!
+  couponCode: String
+  createdAt: DateTime
+  customerId: String
+  deletedAt: DateTime
+  discountTotal: Int!
+  fulfillments: [Fulfillment!]!
+  id: ID!
+  lines: [OrderLine!]!
+  payments: [Payment!]!
+  promotionId: String
+  shippingAddress: OrderAddressType
+  shippingMethodId: String
+  shippingTotal: Int!
+  state: OrderState!
+  subTotal: Int!
+  total: Int!
+  totalQuantity: Int!
+  updatedAt: DateTime
+}
+
 type OrderAddressType {
   addressLine1: String!
   addressLine2: String!
@@ -445,6 +502,21 @@ type OrderLine {
   sku: String!
   unitPrice: Int!
   updatedAt: DateTime
+}
+
+type OrderListResult {
+  items: [Order!]!
+  total: Int!
+}
+
+enum OrderState {
+  CANCELLED
+  CONFIRMED
+  DELIVERED
+  PAID
+  PENDING
+  REFUNDED
+  SHIPPED
 }
 
 type Payment {
@@ -580,6 +652,12 @@ type Query {
   """현재 로그인한 사용자 정보 조회"""
   me: User!
 
+  """주문 단건 조회"""
+  order(id: ID!): Order!
+
+  """주문 목록 조회"""
+  orders(options: ListOrdersDto): OrderListResult!
+
   """ID로 활성 상품 단건 조회 (Shop)"""
   product(id: ID!): Product!
 
@@ -662,6 +740,12 @@ input UpdateCustomFieldDefinitionDto {
   label: String
   list: Boolean
   required: Boolean
+}
+
+input UpdateFulfillmentDto {
+  shippingCarrier: String
+  state: FulfillmentState
+  trackingCode: String
 }
 
 input UpdateProductDto {

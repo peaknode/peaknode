@@ -1,0 +1,43 @@
+meta {
+  name: 결제 추가
+  type: graphql
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{adminAccessToken}}
+}
+
+body:graphql {
+  mutation AddPaymentToOrder($orderId: ID!, $input: AddPaymentDto!) {
+    addPaymentToOrder(orderId: $orderId, input: $input) {
+      id
+      method
+      amount
+      state
+      transactionId
+      createdAt
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "orderId": "order-uuid-here",
+    "input": {
+      "method": "card",
+      "transactionId": "pg-transaction-id-here"
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

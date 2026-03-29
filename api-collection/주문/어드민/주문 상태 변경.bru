@@ -1,0 +1,38 @@
+meta {
+  name: 주문 상태 변경
+  type: graphql
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{adminAccessToken}}
+}
+
+body:graphql {
+  mutation TransitionOrderToState($id: ID!, $state: OrderState!) {
+    transitionOrderToState(id: $id, state: $state) {
+      id
+      code
+      state
+      updatedAt
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "id": "order-uuid-here",
+    "state": "CANCELLED"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

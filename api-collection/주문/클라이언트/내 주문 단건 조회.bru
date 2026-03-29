@@ -1,0 +1,67 @@
+meta {
+  name: 내 주문 단건 조회
+  type: graphql
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{accessToken}}
+}
+
+body:graphql {
+  query MyOrder($id: ID!) {
+    myOrder(id: $id) {
+      id
+      code
+      state
+      subTotal
+      shippingTotal
+      total
+      shippingAddress {
+        fullName
+        addressLine1
+        addressLine2
+        postalCode
+        phoneNumber
+      }
+      lines {
+        id
+        productVariantName
+        sku
+        quantity
+        unitPrice
+        linePrice
+      }
+      payments {
+        id
+        method
+        amount
+        state
+      }
+      fulfillments {
+        id
+        state
+        trackingCode
+        shippingCarrier
+      }
+      createdAt
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "id": "order-uuid-here"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

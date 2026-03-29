@@ -1,0 +1,67 @@
+meta {
+  name: 체크아웃
+  type: graphql
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{accessToken}}
+}
+
+body:graphql {
+  mutation Checkout($cartToken: String!, $input: CheckoutDto!) {
+    checkout(cartToken: $cartToken, input: $input) {
+      id
+      code
+      state
+      subTotal
+      shippingTotal
+      discountTotal
+      total
+      totalQuantity
+      shippingAddress {
+        fullName
+        addressLine1
+        addressLine2
+        postalCode
+        phoneNumber
+      }
+      lines {
+        id
+        productVariantName
+        sku
+        quantity
+        unitPrice
+        linePrice
+      }
+      createdAt
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "cartToken": "guest-cart-token-here",
+    "input": {
+      "shippingMethodId": "shipping-method-uuid-here",
+      "shippingAddress": {
+        "fullName": "홍길동",
+        "addressLine1": "서울시 강남구 테헤란로 123",
+        "addressLine2": "456호",
+        "postalCode": "06234",
+        "phoneNumber": "010-1234-5678"
+      }
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,47 @@
+meta {
+  name: 배송 생성
+  type: graphql
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{adminAccessToken}}
+}
+
+body:graphql {
+  mutation CreateOrderFulfillment($orderId: ID!, $input: CreateFulfillmentDto!) {
+    createOrderFulfillment(orderId: $orderId, input: $input) {
+      id
+      state
+      trackingCode
+      shippingCarrier
+      lines {
+        id
+        productVariantName
+        quantity
+      }
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "orderId": "order-uuid-here",
+    "input": {
+      "orderLineIds": ["order-line-uuid-here"],
+      "shippingCarrier": "CJ대한통운",
+      "trackingCode": "1234567890123"
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -4,6 +4,7 @@ import { DatabaseModule } from "src/common/database";
 import { AssetService } from "./asset/asset.service";
 import { AuthService } from "./auth/auth.service";
 import { CartService } from "./cart/cart.service";
+import { OrderService } from "./order/order.service";
 import { ShippingMethodService } from "./shipping/shipping-method.service";
 import { CustomFieldsService } from "./custom-field/custom-field.service";
 import { ProductAssetService } from "./product/product-asset.service";
@@ -42,6 +43,7 @@ import { RoleService } from "./role/role.service";
   providers: [
     AssetService,
     CartService,
+    OrderService,
     ShippingMethodService,
     ProductService,
     ProductVariantService,
@@ -55,6 +57,7 @@ import { RoleService } from "./role/role.service";
   exports: [
     AssetService,
     CartService,
+    OrderService,
     ShippingMethodService,
     ProductService,
     ProductVariantService,

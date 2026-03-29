@@ -4,6 +4,7 @@ import { ServiceModule } from "src/service/service.module";
 import { JsonScalar } from "./scalars/json.scalar";
 import { AssetController } from "./resolvers/admin/asset.controller";
 import { AssetResolver } from "./resolvers/admin/asset.resolver";
+import { OrderResolver } from "./resolvers/admin/order.resolver";
 import { ShippingMethodResolver } from "./resolvers/admin/shipping-method.resolver";
 import { CustomFieldResolver } from "./resolvers/admin/custom-field.resolver";
 import { ProductResolver } from "./resolvers/admin/product.resolver";
@@ -27,6 +28,7 @@ import { RoleResolver } from "./resolvers/admin/role.resolver";
   providers: [
     JsonScalar,
     AssetResolver,
+    OrderResolver,
     ShippingMethodResolver,
     ProductResolver,
     ProductOptionGroupResolver,

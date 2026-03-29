@@ -1,0 +1,45 @@
+meta {
+  name: 내 주문 목록 조회
+  type: graphql
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{accessToken}}
+}
+
+body:graphql {
+  query MyOrders($options: ListOrdersDto) {
+    myOrders(options: $options) {
+      total
+      items {
+        id
+        code
+        state
+        total
+        totalQuantity
+        createdAt
+      }
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "options": {
+      "skip": 0,
+      "take": 10
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

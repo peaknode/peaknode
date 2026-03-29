@@ -1,0 +1,40 @@
+meta {
+  name: 배송 수정
+  type: graphql
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{adminAccessToken}}
+}
+
+body:graphql {
+  mutation UpdateOrderFulfillment($id: ID!, $input: UpdateFulfillmentDto!) {
+    updateOrderFulfillment(id: $id, input: $input) {
+      id
+      state
+      trackingCode
+      shippingCarrier
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "id": "fulfillment-uuid-here",
+    "input": {
+      "state": "DELIVERED"
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

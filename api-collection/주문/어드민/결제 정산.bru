@@ -1,0 +1,38 @@
+meta {
+  name: 결제 정산
+  type: graphql
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{adminAccessToken}}
+}
+
+body:graphql {
+  mutation SettleOrderPayment($paymentId: ID!, $transactionId: String!) {
+    settleOrderPayment(paymentId: $paymentId, transactionId: $transactionId) {
+      id
+      state
+      transactionId
+      amount
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "paymentId": "payment-uuid-here",
+    "transactionId": "pg-final-transaction-id"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
